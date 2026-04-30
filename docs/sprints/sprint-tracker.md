@@ -49,31 +49,42 @@ Both repos running locally + landing page deployed live + first ad campaign gene
 
 ## Resume here (next concrete action)
 
-> **First**: configure git user.email + user.name in both sub-repos to a personal account (not Intcore work email). Ahmed will provide the email + GitHub username. Then create three PUBLIC GitHub repos (`hadouta`, `hadouta-backend`, `hadouta-web`) and push initial commits.
+> **Step 1 — re-authenticate gh CLI.** Ahmed revoked the PAT after the previous session (good hygiene). Two local commits need push:
+> - `hadouta-backend` HEAD: `feat(api): wire @hono/zod-openapi for type-safe routes + /openapi.json export`
+> - `hadouta-web` HEAD: `feat(api): typed API client via openapi-fetch + auto-generated types`
 >
-> **Then verify backend dev server boots cleanly:**
-> ```bash
-> cd /home/ahmed/Desktop/hadouta/hadouta-backend
-> cp .env.example .env
-> # Add a temporary placeholder DATABASE_URL (real Neon URL comes after Ahmed creates Neon project)
-> pnpm install
-> pnpm dev
-> # In another terminal:
-> curl http://localhost:3001/health
-> # Expected: {"status":"ok","service":"hadouta-backend",...}
+> In the Claude Code prompt, type:
 > ```
->
-> **Then verify frontend boots and connects:**
-> ```bash
-> cd /home/ahmed/Desktop/hadouta/hadouta-web
-> cp .env.example .env.local
-> pnpm dev
-> # Open http://localhost:3000
-> # Verify Arabic landing page renders RTL with Tajawal font
-> # Submit waitlist form; check backend console for received signup
+> ! gh auth login --web
 > ```
+> Walk through browser device-code flow. Then ask Claude to push the two pending commits.
 >
-> **Once both work locally, the next major task is Track A4 (Drizzle migration to Neon) which requires Ahmed creating a Neon project (Track B2).** These two tasks are concurrent — Ahmed creates Neon, Claude wires migration code while waiting.
+> **Step 2 — create Neon project.** Ahmed signs up at https://neon.tech, creates project `hadouta`, copies the connection string into `hadouta-backend/.env` as `DATABASE_URL`. Claude then runs `pnpm db:generate && pnpm db:migrate` to apply initial schema (users, waitlist_signups, themes, orders).
+>
+> **Step 3 — Better-Auth wiring** (Sprint 1 Track A5). After DB exists, configure Better-Auth in Hono with email/password + Google OAuth + Resend SMTP for verification.
+>
+> **In parallel: Ahmed runs Track B Day 1-2** (domain registration, trademark search, social handles, Bosta signup, Cairo print quotes).
+
+---
+
+## Sprint 1 — In Progress (Session 2, 2026-05-01)
+
+Track A foundation work nearly complete:
+- ✅ Both repos installed + dev servers boot cleanly (`pnpm dev` works)
+- ✅ Backend `/health` and `/waitlist` (Zod-validated) respond correctly
+- ✅ End-to-end browser test: form submission flows from Next.js → Hono → success state
+- ✅ Tajawal Arabic font now loading (`--font-sans` CSS var fixed)
+- ✅ OpenAPI spec exposed at `/openapi.json` via `@hono/zod-openapi`
+- ✅ Frontend auto-generates types from backend via `pnpm sync-types`
+- ✅ Typed API client (openapi-fetch) replaces raw fetch in WaitlistForm
+- ✅ GitHub Actions CI added to both repos (typecheck + build)
+- 🟡 **PENDING PUSH** — local commits await `gh auth login --web` (PAT revoked after Sprint 0)
+- ⏸️ Drizzle migration to Neon — blocked on Ahmed creating Neon project
+- ⏸️ Better-Auth wiring — blocked on DB
+- ⏸️ Production deploys (Vercel + Railway) — blocked on domain + accounts
+- ⏸️ Track B (Ahmed) — domain, trademark, handles, services, ad campaign — not started
+
+Detailed log: `docs/session-notes/2026-05-01-session-2.md`
 
 ---
 
@@ -120,7 +131,7 @@ Bootstrap session deliverables — all complete:
 | Sprint | Window | Focus | Status |
 |---|---|---|---|
 | **0** | 2026-04-30 | Bootstrap infra + ADRs + plans | ✅ Complete |
-| **1** | Weeks 1–2 | Foundation: skeletons + landing live + ad campaign | 🟢 Ready to start |
+| **1** | Weeks 1–2 | Foundation: skeletons + landing live + ad campaign | 🟡 In Progress (Track A ~70%, Track B 0%) |
 | **2** | Weeks 3–4 | Validation infrastructure + content production kickoff | ⏸️ Skeletoned |
 | **3** | Weeks 5–8 | AI pipeline foundation (story gen + universal validators) | ⏸️ Skeletoned |
 | **4** | Weeks 9–12 | Customer ordering flow + admin review queue | ⏸️ Skeletoned |
@@ -149,4 +160,4 @@ None currently. Next session can begin executing Sprint 1 immediately.
 
 ---
 
-**Last updated**: 2026-05-01 by Claude (manager). Bootstrap complete; ADR-017 added (Vercel + public repos); awaiting Ahmed's personal git email + GitHub remote setup.
+**Last updated**: 2026-05-01 (session 2) by Claude (manager). Sprint 1 Track A ~70% complete, push pending re-auth, ready for Neon DB next session.
