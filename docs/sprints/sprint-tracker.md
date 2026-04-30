@@ -9,7 +9,12 @@
 **Project**: Hadouta (حدوتة) — Egyptian AI personalized children's book platform
 **Launch target**: September 1, 2026
 **Build window**: ~22 weeks from 2026-04-30
-**Current phase**: ✅ Bootstrap complete · 🟢 **Sprint 1 — Ready to Start**
+**Current phase**: ✅ Bootstrap complete · ✅ Public repos live · 🟢 **Sprint 1 — Ready to Start**
+
+### Public GitHub repos (all live as of 2026-05-01)
+- 📚 **Umbrella + docs**: https://github.com/ahmedabdelhamid404/hadouta
+- ⚙️ **Backend**: https://github.com/ahmedabdelhamid404/hadouta-backend
+- 🎨 **Frontend**: https://github.com/ahmedabdelhamid404/hadouta-web
 
 ---
 
