@@ -59,32 +59,35 @@ Both repos running locally + landing page deployed live + first ad campaign gene
 > ```
 > Walk through browser device-code flow. Then ask Claude to push the two pending commits.
 >
-> **Step 2 — create Neon project.** Ahmed signs up at https://neon.tech, creates project `hadouta`, copies the connection string into `hadouta-backend/.env` as `DATABASE_URL`. Claude then runs `pnpm db:generate && pnpm db:migrate` to apply initial schema (users, waitlist_signups, themes, orders).
+> **Step 2 — Better-Auth wiring** (Sprint 1 Track A5). DB exists and pgvector is enabled. Configure Better-Auth in Hono with email/password + Google OAuth + Resend SMTP for email verification. Sessions stored in the existing Drizzle Postgres connection.
 >
-> **Step 3 — Better-Auth wiring** (Sprint 1 Track A5). After DB exists, configure Better-Auth in Hono with email/password + Google OAuth + Resend SMTP for verification.
+> **Step 3 — Track B kickoff (Ahmed)**: domain registration (`hadouta.com`), trademark search (WIPO + Egyptian Trademark Office), social handle reservation (`@hadouta` on IG/TikTok/Facebook), Bosta merchant signup, Cairo print-shop outreach.
 >
 > **In parallel: Ahmed runs Track B Day 1-2** (domain registration, trademark search, social handles, Bosta signup, Cairo print quotes).
 
 ---
 
-## Sprint 1 — In Progress (Session 2, 2026-05-01)
+## Sprint 1 — In Progress (Sessions 2 + 3, 2026-05-01)
 
-Track A foundation work nearly complete:
+Track A foundation work substantially complete; DB now live:
 - ✅ Both repos installed + dev servers boot cleanly (`pnpm dev` works)
 - ✅ Backend `/health` and `/waitlist` (Zod-validated) respond correctly
-- ✅ End-to-end browser test: form submission flows from Next.js → Hono → success state
-- ✅ Tajawal Arabic font now loading (`--font-sans` CSS var fixed)
+- ✅ End-to-end browser test: form submission flows Next.js → Hono → Neon → DB row
+- ✅ Tajawal Arabic font loading (`--font-sans` CSS var fixed)
 - ✅ OpenAPI spec exposed at `/openapi.json` via `@hono/zod-openapi`
-- ✅ Frontend auto-generates types from backend via `pnpm sync-types`
+- ✅ Frontend auto-generates types via `pnpm sync-types`
 - ✅ Typed API client (openapi-fetch) replaces raw fetch in WaitlistForm
 - ✅ GitHub Actions CI added to both repos (typecheck + build)
-- 🟡 **PENDING PUSH** — local commits await `gh auth login --web` (PAT revoked after Sprint 0)
-- ⏸️ Drizzle migration to Neon — blocked on Ahmed creating Neon project
-- ⏸️ Better-Auth wiring — blocked on DB
+- ✅ **Neon Postgres project** "Hadouta" live in `aws-eu-central-1` (Frankfurt — closest to Egypt)
+- ✅ Drizzle migration `0000_violet_warlock.sql` applied → 4 tables (users, waitlist_signups, themes, orders)
+- ✅ `pgvector` extension v0.8.0 enabled (ready for active learning embeddings later)
+- ✅ Waitlist endpoint persists to Neon (verified via real browser submission — Arabic names stored correctly)
+- 🟡 **PENDING PUSH** — local commits await `gh auth login --web` (PAT revoked, good security)
+- ⏸️ Better-Auth wiring (next session)
 - ⏸️ Production deploys (Vercel + Railway) — blocked on domain + accounts
 - ⏸️ Track B (Ahmed) — domain, trademark, handles, services, ad campaign — not started
 
-Detailed log: `docs/session-notes/2026-05-01-session-2.md`
+Detailed logs: `docs/session-notes/2026-05-01-session-2.md` + session-3 to be written.
 
 ---
 
