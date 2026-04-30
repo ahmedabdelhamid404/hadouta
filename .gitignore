@@ -1,0 +1,15 @@
+# The umbrella folder is its own git repo for SHARED docs only.
+# The two sub-repos (hadouta-backend, hadouta-web) are independent git repos
+# and must NOT be tracked here — they have their own histories.
+
+hadouta-backend/
+hadouta-web/
+
+# OS / temp
+.DS_Store
+*.swp
+*.tmp
+
+# Editor
+.vscode/
+.idea/
