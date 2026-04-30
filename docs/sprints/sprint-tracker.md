@@ -49,27 +49,35 @@ Both repos running locally + landing page deployed live + first ad campaign gene
 
 ## Resume here (next concrete action)
 
-> **Step 1 — re-authenticate gh CLI.** Ahmed revoked the PAT after the previous session (good hygiene). Two local commits need push:
-> - `hadouta-backend` HEAD: `feat(api): wire @hono/zod-openapi for type-safe routes + /openapi.json export`
-> - `hadouta-web` HEAD: `feat(api): typed API client via openapi-fetch + auto-generated types`
+> **Step 1 — re-authenticate gh CLI.** Ahmed revoked the PAT after session 2 (good hygiene). Now **three** local backend commits need push:
+> - `hadouta-backend` HEAD: `feat(auth): wire Better-Auth email/password + Google OAuth + Resend email verification` (session 3)
+> - `hadouta-backend` HEAD~1: `feat(db): wire Neon Postgres + Drizzle migrations + waitlist persistence` (session 2)
+> - `hadouta-backend` HEAD~2: `feat(api): wire @hono/zod-openapi for type-safe routes + /openapi.json export` (session 2)
+> - `hadouta-web` HEAD: `feat(api): typed API client via openapi-fetch + auto-generated types` (session 2)
 >
 > In the Claude Code prompt, type:
 > ```
 > ! gh auth login --web
 > ```
-> Walk through browser device-code flow. Then ask Claude to push the two pending commits.
+> Walk through browser device-code flow. Then ask Claude to push.
 >
-> **Step 2 — Better-Auth wiring** (Sprint 1 Track A5). DB exists and pgvector is enabled. Configure Better-Auth in Hono with email/password + Google OAuth + Resend SMTP for email verification. Sessions stored in the existing Drizzle Postgres connection.
+> **Step 2 — Sentry + PostHog observability** (Sprint 1 Track A15–A16). Both repos. Free tiers. Sprint 1 acceptance lists this; needed before deploy so we have error visibility from day one.
 >
-> **Step 3 — Track B kickoff (Ahmed)**: domain registration (`hadouta.com`), trademark search (WIPO + Egyptian Trademark Office), social handle reservation (`@hadouta` on IG/TikTok/Facebook), Bosta merchant signup, Cairo print-shop outreach.
+> **Step 3 — Track B kickoff (Ahmed-owned, blocks deploy)**: domain registration (`hadouta.com`), trademark search (WIPO + Egyptian Trademark Office), social handle reservation (`@hadouta` on IG/TikTok/Facebook), Bosta merchant signup, Cairo print-shop outreach. Track B has not started yet.
 >
-> **In parallel: Ahmed runs Track B Day 1-2** (domain registration, trademark search, social handles, Bosta signup, Cairo print quotes).
+> **Step 4 — Production deploys** (Track A11–A14). Blocked on Step 3's domain registration. Vercel for frontend, Railway for backend, Resend domain verification.
+>
+> **Sprint-2 follow-ups recorded from session 3** (do not lose track):
+> - Rate-limit hardening + Redis-backed secondary-storage on auth endpoints before horizontal scale
+> - Session `ip_address` / `user_agent` PII retention policy (needs ADR before storing or disabling)
+> - OpenAPI exposure of auth routes (Better-Auth bypasses `OpenAPIHono.openapi()`)
+> - Test-data cleanup helper (auth tests leak `test-*@example.com` rows into dev Neon)
 
 ---
 
 ## Sprint 1 — In Progress (Sessions 2 + 3, 2026-05-01)
 
-Track A foundation work substantially complete; DB now live:
+Track A foundation work substantially complete; auth + DB now live:
 - ✅ Both repos installed + dev servers boot cleanly (`pnpm dev` works)
 - ✅ Backend `/health` and `/waitlist` (Zod-validated) respond correctly
 - ✅ End-to-end browser test: form submission flows Next.js → Hono → Neon → DB row
@@ -79,15 +87,16 @@ Track A foundation work substantially complete; DB now live:
 - ✅ Typed API client (openapi-fetch) replaces raw fetch in WaitlistForm
 - ✅ GitHub Actions CI added to both repos (typecheck + build)
 - ✅ **Neon Postgres project** "Hadouta" live in `aws-eu-central-1` (Frankfurt — closest to Egypt)
-- ✅ Drizzle migration `0000_violet_warlock.sql` applied → 4 tables (users, waitlist_signups, themes, orders)
+- ✅ Drizzle migration `0000_violet_warlock.sql` applied → 4 initial tables (users, waitlist_signups, themes, orders)
 - ✅ `pgvector` extension v0.8.0 enabled (ready for active learning embeddings later)
 - ✅ Waitlist endpoint persists to Neon (verified via real browser submission — Arabic names stored correctly)
-- 🟡 **PENDING PUSH** — local commits await `gh auth login --web` (PAT revoked, good security)
-- ⏸️ Better-Auth wiring (next session)
+- ✅ **Better-Auth wired** (session 3): email/password + Google OAuth (conditional on env) + Resend email verification (prod-required, dev-falls-back-to-stdout) + Drizzle migration `0001_abnormal_calypso.sql` applied → +4 tables (user, session, account, verification), `orders.user_id` retyped to text. 3 Vitest integration tests pass.
+- 🟡 **PENDING PUSH** — 3 backend commits + 1 frontend commit await `gh auth login --web` (PAT revoked, good security)
+- ⏸️ Sentry + PostHog (Track A15–A16) — next code task
 - ⏸️ Production deploys (Vercel + Railway) — blocked on domain + accounts
 - ⏸️ Track B (Ahmed) — domain, trademark, handles, services, ad campaign — not started
 
-Detailed logs: `docs/session-notes/2026-05-01-session-2.md` + session-3 to be written.
+Detailed logs: `docs/session-notes/2026-05-01-session-2.md`, `docs/session-notes/2026-05-01-session-3.md`.
 
 ---
 
@@ -134,7 +143,7 @@ Bootstrap session deliverables — all complete:
 | Sprint | Window | Focus | Status |
 |---|---|---|---|
 | **0** | 2026-04-30 | Bootstrap infra + ADRs + plans | ✅ Complete |
-| **1** | Weeks 1–2 | Foundation: skeletons + landing live + ad campaign | 🟡 In Progress (Track A ~70%, Track B 0%) |
+| **1** | Weeks 1–2 | Foundation: skeletons + landing live + ad campaign | 🟡 In Progress (Track A ~85%, Track B 0%) |
 | **2** | Weeks 3–4 | Validation infrastructure + content production kickoff | ⏸️ Skeletoned |
 | **3** | Weeks 5–8 | AI pipeline foundation (story gen + universal validators) | ⏸️ Skeletoned |
 | **4** | Weeks 9–12 | Customer ordering flow + admin review queue | ⏸️ Skeletoned |
@@ -163,4 +172,4 @@ None currently. Next session can begin executing Sprint 1 immediately.
 
 ---
 
-**Last updated**: 2026-05-01 (session 2) by Claude (manager). Sprint 1 Track A ~70% complete, push pending re-auth, ready for Neon DB next session.
+**Last updated**: 2026-05-01 (session 3) by Claude (manager). Sprint 1 Track A ~85% complete (auth wired + tested + committed locally), push of 4 commits pending `gh auth login --web`. Next code task: Sentry + PostHog. Track B (Ahmed-owned) still at 0%.
