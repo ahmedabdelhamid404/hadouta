@@ -16,25 +16,19 @@ After reading those three, you have full context: project goal, locked decisions
 
 ## ⚙️ How I work on this project
 
-I am the **manager**. I orchestrate user-scope specialist agents (Backend Architect, Frontend Developer, AI Engineer, Database Optimizer, Code Reviewer, etc.) for non-trivial tasks. The specialists do the focused work; I review their output; Code Reviewer runs second-pass on every code change before commit. Map of which agent does what: `docs/agents-playbook.md`.
+**Default mode: I implement directly.** Read context (constitution, ADRs, sprint plan, in-flight work), implement, verify (`pnpm typecheck` + tests), self-review against the constitution, commit, update the tracker + write a session note. One agent (me), one pass.
 
-I auto-delegate without asking permission per task. The user already approved this pattern. Only escalate if a task requires a destructive action or a strategic decision (new ADR, scope change, etc.).
+I bring in a specialist agent only when a task is genuinely senior-tier — novel AI pipeline architecture, cross-cutting validator framework design (Sprint 3+), security-critical flows beyond standard auth, threat-modeling sensitive flows — **and** doing it solo would risk a wrong call that costs hours to undo. The bar is high. Standard auth, CRUD, deploy config, frontend pages, observability wiring, schema additions → me, direct. Agent-to-task reference and the criteria for when delegation is actually justified live in `docs/agents-playbook.md`.
 
-## 🛠️ Two complementary tools, both used automatically
+Pause and ask the user before: destructive operations (data deletion, force-push, applying production migrations), decisions that require a new ADR, scope changes beyond the current sprint, genuinely ambiguous intent.
 
-### Spec-kit (the workflow)
-For any non-trivial feature, use spec-kit's slash commands in order:
-- `/speckit.specify` — write the feature spec
-- `/speckit.plan` — technical plan
-- `/speckit.tasks` — task breakdown
-- `/speckit.implement` — execute (delegating to agents inside this step)
+## 🛠️ Tools available — used selectively, not by default
 
-Skip spec-kit only for trivial work (typos, single-line config tweaks).
+### Spec-kit
+Slash commands `/speckit.specify`, `/speckit.plan`, `/speckit.tasks`, `/speckit.implement` are wired in both repos. Reach for them only when (a) the user explicitly asks, or (b) the task has genuine ambiguity (no ADR, no sprint-plan task, contradictory requirements). For routine sprint work, the constitution + ADRs + sprint plan + tracker already constitute the spec — running spec-kit on top is documentation overhead without changed outcomes.
 
-### Agency-agents (the workforce)
-Specialist agents in `~/.claude/agents/` live in user scope and are available everywhere. The playbook (`docs/agents-playbook.md`) maps task type → which agent handles it. Inside `/speckit.implement`, I delegate to these agents.
-
-These two tools compose. Spec-kit gives structured discipline; agency-agents give specialist execution. They do not compete; pick neither in isolation.
+### Agency-agents
+Specialist agents in `~/.claude/agents/` are user-scope and globally available. They are tools for the rare senior-tier cases described above — not a default workforce. See `docs/agents-playbook.md` for the agent-to-task reference and the criteria for when delegation is justified.
 
 ## 📂 Folder map
 
@@ -68,7 +62,7 @@ The two sub-repos are independent — they have their own git history. Don't acc
 - Both repos use **TypeScript strict mode** — no `any`
 - Backend: **Zod** at every boundary (HTTP, LLM, queue, DB)
 - Frontend: **shadcn/ui** components in RTL Arabic mode by default
-- Mandatory **Code Reviewer** agent pass on every code change before commit
+- Self-review every code change against the relevant constitution before commit; **Code Reviewer agent is opt-in**, reserved for senior-tier changes where a fresh pair of eyes is genuinely worth the cost
 - See each repo's `.specify/memory/constitution.md` for full principles
 
 ## 🚦 When in doubt
