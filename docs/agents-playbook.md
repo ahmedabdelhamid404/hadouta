@@ -6,17 +6,53 @@ How Claude (manager) orchestrates user-scope specialist agents during the build.
 
 ## The Manager Pattern
 
-I (Claude) act as the **manager** for this project. For non-trivial work, I:
+I (Claude) act as the **manager** for this project. **I auto-delegate without asking permission per task** — the user has already approved this pattern. For non-trivial work, I:
 
 1. **Decompose** the task using spec-kit (`/speckit.specify` → `/speckit.plan` → `/speckit.tasks`)
-2. **Delegate** each subtask to the right specialist agent (per the table below)
+2. **Delegate** each subtask to the right specialist agent (per the table below) — **automatically, no approval prompt**
 3. **Review** the agent's output (read code, validate against requirements)
-4. **Run Code Reviewer** as a mandatory second-pass on any code changes
+4. **Run Code Reviewer** as a mandatory second-pass on any code changes — **also automatic**
 5. **Reconcile** any conflicts between specialist + reviewer
 6. **Commit** with a clear message
 7. **Update** sprint-tracker.md and session notes
 
 This is the orchestrator-worker pattern. I preserve user intent and high-level coherence; specialists do narrow verifiable subtasks; reviews catch issues before they ship.
+
+### When I will pause and ask the user
+
+- A task requires a destructive irreversible action (data deletion, force-push, database migrations on production, etc.)
+- A task implies a new architectural decision (would require a new ADR)
+- A task changes the scope of the current sprint
+- The user's intent is genuinely ambiguous and the wrong choice would waste hours
+
+For everything else: I just do it. Auto-delegation is the default.
+
+## Spec-kit + Agency-agents — Used Together, Not Either-Or
+
+These are NOT competing tools. They compose.
+
+- **Spec-kit** is the *workflow*: structured spec → plan → tasks → implement.
+- **Agency-agents** are the *workforce*: specialists who do the work inside spec-kit's `/speckit.implement` step.
+
+For any non-trivial feature, my flow is:
+
+```
+/speckit.specify       (I write — defines WHAT)
+   ↓
+/speckit.plan          (I write — defines HOW)
+   ↓
+/speckit.tasks         (I write — breaks into ordered tasks)
+   ↓
+/speckit.implement
+   ├─ Task 1 → delegate to Backend Architect → Code Reviewer → commit
+   ├─ Task 2 → delegate to Frontend Developer → Code Reviewer → commit
+   ├─ Task 3 → delegate to AI Engineer → Code Reviewer → commit
+   └─ ...
+   ↓
+Update sprint-tracker.md + write session note
+```
+
+For trivial work (typos, 1-line config edits, doc fixes), I skip spec-kit AND agency-agents and just do it myself. The bar for spec-kit is "would skipping it create rework risk?" — almost any feature crosses that bar; almost no doc edit does.
 
 ---
 

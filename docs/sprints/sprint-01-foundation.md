@@ -36,6 +36,9 @@ Have a real Hadouta landing page on `https://hadouta.com` collecting waitlist em
 
 ### Track A — Code & Infrastructure (Claude executes, Ahmed reviews)
 
+> Deployment targets (per ADR-017): **Frontend → Vercel** (free Hobby tier), **Backend → Railway**. Both repos PUBLIC on GitHub.
+
+
 **Day 1–2: Repos already bootstrapped (Sprint 0); now flesh out skeletons**
 
 - A1. Backend: implement `/health` route returning `{ status: 'ok', version, timestamp }`
@@ -61,11 +64,11 @@ Have a real Hadouta landing page on `https://hadouta.com` collecting waitlist em
 **Day 5: Deploy + DNS**
 
 - A11. After Ahmed registers domain (Track B), configure DNS:
-  - `hadouta.com` → Cloudflare Pages (Next.js frontend)
+  - `hadouta.com` → Vercel (Next.js frontend, via `vercel domains add`)
   - `api.hadouta.com` → Railway (Hono backend)
   - `mail.hadouta.com` → Resend domain verification (DKIM, SPF)
 - A12. Deploy backend to Railway free tier
-- A13. Deploy frontend to Cloudflare Pages (free)
+- A13. Deploy frontend to Vercel (Hobby free): `vercel link` + `vercel --prod`
 - A14. Smoke test end-to-end: form submission flows from production landing page → production backend → Neon DB
 
 **Day 6–7: Observability + commit hygiene**
@@ -151,7 +154,7 @@ Have a real Hadouta landing page on `https://hadouta.com` collecting waitlist em
 2. **Facebook ad account approval delay** — start signup Day 1; if delayed, organic mom group posts cover Week 1 validation gap
 3. **Print shops slow to respond** — email follow-up Day 4; if no quotes by end of Sprint 1, push to Sprint 2 (not blocking)
 4. **Resend domain verification delays** — use a temporary domain for Better-Auth emails until propagation completes
-5. **Cloudflare Pages + Next.js 15 edge runtime issues** — fallback to Vercel free tier hosting if `@cloudflare/next-on-pages` adapter has bugs
+5. **Vercel free-tier limits** — 100GB/month bandwidth + function execution caps. Mitigated by routing image/PDF assets through Cloudflare R2 + CDN (not Vercel). If we exceed Vercel free tier on launch traffic, upgrade to Pro ($20/mo).
 
 ---
 

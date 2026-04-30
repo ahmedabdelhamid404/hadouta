@@ -44,7 +44,9 @@ Both repos running locally + landing page deployed live + first ad campaign gene
 
 ## Resume here (next concrete action)
 
-> **Verify backend dev server boots cleanly:**
+> **First**: configure git user.email + user.name in both sub-repos to a personal account (not Intcore work email). Ahmed will provide the email + GitHub username. Then create three PUBLIC GitHub repos (`hadouta`, `hadouta-backend`, `hadouta-web`) and push initial commits.
+>
+> **Then verify backend dev server boots cleanly:**
 > ```bash
 > cd /home/ahmed/Desktop/hadouta/hadouta-backend
 > cp .env.example .env
@@ -104,6 +106,7 @@ Bootstrap session deliverables — all complete:
 | ADR-014 | Pricing: A/B test 250 vs 300 EGP digital (TENTATIVE — final after Sprint 1) |
 | ADR-015 | Validation parallel with build (Lean Startup) |
 | ADR-016 | Distribution: FB+IG paid + nano/micro influencers (phased) + organic mom groups |
+| ADR-017 | Vercel deployment for frontend + PUBLIC GitHub repos (added 2026-05-01) |
 
 ---
 
@@ -141,4 +144,4 @@ None currently. Next session can begin executing Sprint 1 immediately.
 
 ---
 
-**Last updated**: 2026-04-30 by Claude (manager). Bootstrap complete.
+**Last updated**: 2026-05-01 by Claude (manager). Bootstrap complete; ADR-017 added (Vercel + public repos); awaiting Ahmed's personal git email + GitHub remote setup.
