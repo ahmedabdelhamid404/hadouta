@@ -13,3 +13,6 @@ hadouta-web/
 # Editor
 .vscode/
 .idea/
+
+# Claude Code session-local artifacts (personal allowlist, not shared)
+.claude/settings.local.json
