@@ -39,3 +39,9 @@ Supabase is rejected as a primary DB+Auth+Storage bundle.
 - DB research fork (2026-04-30): Supabase concerns validated; Neon recommended
 - Better-Auth vs Clerk vs Supabase Auth 2026 daily.dev guide
 - Design doc § 3.2: Component diagram
+
+## Addendum (2026-05-01, session 4)
+
+This ADR specifies the auth library (Better-Auth) but did not specify the auth *strategy* (which factors, in what order, with what UX flow). The Sprint 0 scaffold used the library default (email-password + Google OAuth + email verification), which session 4 identified as strategically misaligned with the Egyptian market.
+
+**Auth strategy is now defined by ADR-018: phone-first WhatsApp OTP with multi-tier fallback and invisible accounts.** ADR-018 does not replace this ADR — Better-Auth + Neon + R2 remain the underlying stack. ADR-018 specifies how that stack is exposed to users.

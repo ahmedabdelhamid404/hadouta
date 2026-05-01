@@ -51,17 +51,21 @@ Both repos running locally + landing page deployed live + first ad campaign gene
 
 > **🟢 Hadouta is LIVE on the internet** as of 2026-05-01 (session 4). Frontend at https://hadouta-web.vercel.app, backend at https://hadouta-backend-production.up.railway.app, end-to-end waitlist flow verified with a real Neon insert. Custom domain `hadouta.com` not yet registered (Track B).
 >
-> **Step 1 — Sentry + PostHog observability** (Sprint 1 Track A15–A16). Both repos. Free tiers. Sprint 1 acceptance criterion. Self-contained code change, ~1-2 hours, no external dependencies. Recommended next.
+> **🔄 Auth strategy pivoted (ADR-018, 2026-05-01)**: from email-password-first to phone-first WhatsApp OTP with Google + email as linked fallbacks, invisible accounts at purchase, lazy verification. Session-3 implementation was *technically correct* but *strategically misaligned* with Egyptian market (94% smartphone, WhatsApp-dominant). Code pivot is ~6-9 hours; Meta Business Verification (Track B item) is the long pole.
 >
-> **Step 2 — Track B kickoff (Ahmed-owned, long pole for "real launch")**: domain registration (`hadouta.com`), trademark search (WIPO + Egyptian Trademark Office), social handle reservation (`@hadouta` on IG/TikTok/Facebook), Bosta merchant signup, Cairo print-shop outreach, ad campaign creatives. Track B has not started; can run in parallel with A15-A16.
+> **Step 1 — Implement ADR-018 phone-first auth.** Add Better-Auth `phone-number` + `email-otp` plugins; drop `requireEmailVerification` gate; wire Twilio WhatsApp sandbox (sandbox is enough for dev — production needs FB Business Verification first); rebuild signup form (phone-primary, secondary buttons for Google/email). ~6-9 hours. Sprint 1 acceptance criterion "Better-Auth signup/signin works" reinterpreted: tested via phone-OTP, not email-password.
 >
-> **Step 3 — Custom domain wire-up.** Once `hadouta.com` is registered: point apex to Vercel project, `api.hadouta.com` to Railway service. Update `FRONTEND_URL` (Railway) and `NEXT_PUBLIC_API_URL` (Vercel) to the custom domains. Update Better-Auth's expected origins.
+> **Step 2 — Sentry + PostHog observability** (Sprint 1 Track A15–A16). Both repos. Free tiers. Sprint 1 acceptance criterion. Self-contained code change, ~1-2 hours, no external dependencies. Can run after or in parallel with Step 1; not blocked.
 >
-> **Step 4 — Real Resend API key.** Currently a placeholder string passes the prod-mode env guard (`re_placeholder_obtain_real_key_post_sprint1`). Auth signup flow needs a real key. Free-tier sufficient for early Sprint 1.
+> **Step 3 — Track B kickoff (Ahmed-owned, long pole for "real launch")**: domain registration (`hadouta.com`), trademark search (WIPO + Egyptian Trademark Office), social handle reservation (`@hadouta` on IG/TikTok/Facebook), Bosta merchant signup, Cairo print-shop outreach, ad campaign creatives, **plus now: Meta Business Verification + Twilio WhatsApp sender setup** (needs Egyptian commercial register + tax card; 3-7 days for Meta to verify; runs in parallel with code work — start ASAP, it's the long pole).
 >
-> **Step 5 — Vercel CLI token rotation.** `vca_1yDfEW...` was exposed in session 4 chat transcript while reading `~/.local/share/com.vercel.cli/auth.json`. Revoke at https://vercel.com/account/tokens; `vercel login` to re-mint.
+> **Step 4 — Custom domain wire-up.** Once `hadouta.com` is registered: point apex to Vercel project, `api.hadouta.com` to Railway service. Update `FRONTEND_URL` (Railway) and `NEXT_PUBLIC_API_URL` (Vercel) to the custom domains. Update Better-Auth's expected origins.
 >
-> **Step 6 — Railway GitHub auto-deploy integration.** Backend currently only deploys via explicit `railway up`. Wire push-to-deploy via Railway dashboard (CLI `--repo` flag fails without prior Railway-GitHub authorization). After this, Vercel and Railway have parity on the deploy trigger.
+> **Step 5 — Real Resend API key.** Currently a placeholder string passes the prod-mode env guard (`re_placeholder_obtain_real_key_post_sprint1`). Email-OTP fallback flow (ADR-018 tier 4) needs a real key. Free-tier sufficient for early Sprint 1.
+>
+> **Step 6 — Vercel CLI token rotation.** `vca_1yDfEW...` was exposed in session 4 chat transcript while reading `~/.local/share/com.vercel.cli/auth.json`. Revoke at https://vercel.com/account/tokens; `vercel login` to re-mint.
+>
+> **Step 7 — Railway GitHub auto-deploy integration.** Backend currently only deploys via explicit `railway up`. Wire push-to-deploy via Railway dashboard (CLI `--repo` flag fails without prior Railway-GitHub authorization). After this, Vercel and Railway have parity on the deploy trigger.
 >
 > **Sprint-2 follow-ups (do not lose track)**:
 > - Rate-limit hardening + Redis-backed secondary-storage on auth endpoints before horizontal scale
@@ -94,11 +98,13 @@ Track A foundation work ~95% complete. **Hadouta is LIVE on the internet.**
 - ✅ **Railway project + service deployed** (session 4) — `hadouta-backend-production.up.railway.app/health` returns 200 in production mode. 7 env vars set (secrets via stdin), public domain assigned via `railway domain`.
 - ✅ **Live end-to-end pipeline test** (session 4) — Vercel UI → CORS preflight → Railway API → Drizzle → Neon insert → Arabic success message back to client. Real DB row written.
 - ✅ **CLIs installed + authenticated** (session 4) — `vercel`, `railway`, `neonctl` all in `~/.nvm/.../bin/`, all logged in.
-- ⏸️ Sentry + PostHog (Track A15–A16) — next code task; not started
+- 🔄 **Auth strategy pivoted (ADR-018, 2026-05-01)** — from email-password-first to phone-first WhatsApp OTP with multi-tier fallback (SMS → Google → email) and invisible accounts. Session-3's Better-Auth wiring stays as foundation; the strategy layer above it pivots. Implementation: ~6-9 hours code; Meta Business Verification (Track B) is the long pole.
+- ⏸️ ADR-018 implementation — Better-Auth `phone-number` + `email-otp` plugins, Twilio WhatsApp wiring (sandbox first), signup form rework, drop `requireEmailVerification`. Not started.
+- ⏸️ Sentry + PostHog (Track A15–A16) — code task; can run after or parallel with ADR-018 work; not started
 - ⏸️ Custom domain `hadouta.com` — Track B (Ahmed-owned), not started
-- ⏸️ Track B (Ahmed) — domain, trademark, handles, services, ad campaign — not started
+- ⏸️ Track B (Ahmed) — domain, trademark, handles, services, ad campaign, **Meta Business Verification + Twilio WhatsApp setup** (new, ADR-018 long pole) — not started
 
-Detailed logs: `docs/session-notes/2026-05-01-session-2.md` (DB + types), `docs/session-notes/2026-05-01-session-3.md` (auth), `docs/session-notes/2026-05-01-session-4.md` (deploys live).
+Detailed logs: `docs/session-notes/2026-05-01-session-2.md` (DB + types), `docs/session-notes/2026-05-01-session-3.md` (auth foundation), `docs/session-notes/2026-05-01-session-4.md` (deploys live + auth pivot).
 
 ---
 
@@ -137,6 +143,7 @@ Bootstrap session deliverables — all complete:
 | ADR-015 | Validation parallel with build (Lean Startup) |
 | ADR-016 | Distribution: FB+IG paid + nano/micro influencers (phased) + organic mom groups |
 | ADR-017 | Vercel deployment for frontend + PUBLIC GitHub repos (added 2026-05-01) |
+| ADR-018 | Auth: phone-first WhatsApp OTP + multi-tier fallback (SMS → Google → email) + invisible accounts (added 2026-05-01) |
 
 ---
 
@@ -174,4 +181,4 @@ None currently. Next session can begin executing Sprint 1 immediately.
 
 ---
 
-**Last updated**: 2026-05-01 (session 4) by Claude. Sprint 1 Track A ~95% complete — all 4 commits pushed, frontend live at `hadouta-web.vercel.app`, backend live at `hadouta-backend-production.up.railway.app`, end-to-end waitlist flow verified in production. Three CLIs installed + authenticated (vercel, railway, neonctl). Next code task: Sentry + PostHog (A15-A16). Track B (Ahmed-owned) still at 0%. Credential-rotation followup: Vercel `vca_` token from auth.json file.
+**Last updated**: 2026-05-01 (session 4 + auth pivot discussion) by Claude. Sprint 1 Track A ~90% complete (down from 95% after auth pivot decision — ADR-018 adds ~6-9h of phone-first OTP work). Frontend live at `hadouta-web.vercel.app`, backend live at `hadouta-backend-production.up.railway.app`, end-to-end waitlist flow verified in production. Three CLIs installed + authenticated (vercel, railway, neonctl). **Next code task: implement ADR-018 (phone-first WhatsApp OTP)**, then Sentry + PostHog. Track B (Ahmed-owned) still at 0% — Meta Business Verification now added as a Track B long-pole item.
