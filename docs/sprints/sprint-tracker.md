@@ -9,7 +9,7 @@
 **Project**: Hadouta (حدوتة) — Egyptian AI personalized children's book platform
 **Launch target**: September 1, 2026
 **Build window**: ~22 weeks from 2026-04-30
-**Current phase**: ✅ Bootstrap complete · ✅ Public repos live · 🟢 **Sprint 1 Track A ~99.9%** (only credentials-gated tasks remain)
+**Current phase**: ✅ Bootstrap complete · ✅ Public repos live · ✅ **Sprint 1 Track A ~99.99% — wizard works end-to-end on production** · ⏸️ Track B (your launch prereqs) pending · ⏸️ Sprint 2 not started
 
 ### Public GitHub repos (all live as of 2026-05-01)
 - 📚 **Umbrella + docs**: https://github.com/ahmedabdelhamid404/hadouta
@@ -206,7 +206,7 @@ Bootstrap session deliverables — all complete:
 | Sprint | Window | Focus | Status |
 |---|---|---|---|
 | **0** | 2026-04-30 | Bootstrap infra + ADRs + plans | ✅ Complete |
-| **1** | Weeks 1–2 | Foundation: skeletons + landing live + ad campaign | 🟡 In Progress (Track A ~99.9% — Phase 3 designs done, Phase 5 Parts 1+2+3 all shipped + pushed. Remaining: credentials-gated R2 + Paymob, e2e smoke, production wiring. Track B 0%) |
+| **1** | Weeks 1–2 | Foundation: skeletons + landing live + ad campaign | 🟢 ~99.99% (Track A engineering DONE — wizard works end-to-end on production with Cloudinary photo upload + Paymob payment + dev OTP bypass. Track B prereqs and credential upgrades remain.) |
 | **2** | Weeks 3–4 | Validation infrastructure + content production kickoff | ⏸️ Skeletoned |
 | **3** | Weeks 5–8 | AI pipeline foundation (story gen + universal validators) | ⏸️ Skeletoned |
 | **4** | Weeks 9–12 | Customer ordering flow + admin review queue | ⏸️ Skeletoned |
@@ -235,4 +235,4 @@ None currently. Next session can begin executing Sprint 1 immediately.
 
 ---
 
-**Last updated**: 2026-05-02 (session 7) by Claude. Sprint 1 Track A ~99.9% — **Phase 3 screen design DONE** + **Phase 5 Parts 1+2+3 ALL SHIPPED + PUSHED**. Backend: schema migration + 8-theme + 8-moral seeds + wizard CRUD + catalog APIs (`hadouta-backend@0bfccec`). Frontend: full landing page with 9 sections + complete 7-step wizard with Zustand store + react-hook-form + Zod (`hadouta-web@9183250`). Brand brief v1.2 with AI-honesty quiet-middle-path rule. All work on `feat/phase-5-implementation` branches in both sub-repos. Only **credentials-gated tasks** (R2 + Paymob) + e2e smoke + Track B (Meta verification, domain, decorative-motif library, team photos, writer+illustrator commissions) gate real launch.
+**Last updated**: 2026-05-02 (session 8) by Claude. **Sprint 1 Track A ~99.99% — wizard works end-to-end on production.** Ahmed verified manually: landing → wizard step 1-5 → Cloudinary photo upload → step 6 dev-OTP bypass → Paymob test card → return → step 7 confirmation. Both Paymob callbacks fire (webhook server-to-server + browser redirect). Cloudinary photo storage live (free tier, no card needed). Dev-mode OTP bypass with hardcoded `123456` until Twilio creds land (one env var flip away). All Phase 5 implementation tasks complete that don't require external credentials. **Three "what's next" options**: (A) Track B credential acquisition for real launch (Twilio signup + Meta verification + domain + decorative-motif library + writer/illustrator commissions), (B) Sprint 2 AI pipeline kickoff (story generation + illustration + admin review queue), (C) Sprint 1 hardening (Paymob HMAC reject-on-mismatch, rate limiting, PII retention ADR, real hero illustration). See `docs/session-notes/2026-05-02-session-8.md` for the comprehensive direction analysis.
