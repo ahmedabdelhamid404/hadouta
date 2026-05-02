@@ -144,6 +144,7 @@ Bootstrap session deliverables — all complete:
 | ADR-016 | Distribution: FB+IG paid + nano/micro influencers (phased) + organic mom groups |
 | ADR-017 | Vercel deployment for frontend + PUBLIC GitHub repos (added 2026-05-01) |
 | ADR-018 | Auth: phone-first WhatsApp OTP + multi-tier fallback (SMS → Google → email) + invisible accounts (added 2026-05-01) |
+| ADR-019 | Multi-style illustration architecture: watercolor-only MVP, multi-style-ready foundation (style as first-class field on themes/orders/illustrations; per-style prompt registry; future styles get distinct brand surfaces, not chrome variants) (added 2026-05-01) |
 
 ---
 
