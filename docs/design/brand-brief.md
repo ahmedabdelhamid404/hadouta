@@ -1,6 +1,6 @@
 # Hadouta — Brand Brief
 
-**Status**: v1.1 — Brand Guardian audit applied; ready for Phase 2 (token derivation)
+**Status**: v1.1 — Brand Guardian audit applied; **Phase 2 design tokens shipped (session 5)**; ready for Phase 3 Figma screen designs
 **Date**: 2026-05-01 (session 4 + brand-discovery + Brand Guardian audit pass)
 **Owner**: Ahmed
 **Process**: Direct interactive brand discovery (8-question conversation, Claude as facilitator) → Brand Guardian agent audit pass → revisions incorporating 6 critical findings + 3 new sections (failure-mode voice, WhatsApp template spec, voice example sheet)
@@ -598,13 +598,28 @@ Substantive brand refresh review at **18 months post-launch (March 2028)**. Incr
 - ⏸️ User review of v1.1 (current step)
 - ⏸️ Lock + commit + push
 
-### Phase 2 — Design tokens
+### Phase 2 — Design tokens ✅ SHIPPED 2026-05-02 (session 5)
 
-- Convert the working palette + typography stack + spacing scale into actual `globals.css` design tokens
-- Verify WCAG AA contrast for all foreground/background combinations
-- Define a coherent radius scale (avoid both no-radius and pill-radius extremes)
-- Define motion timing tokens (Storyteller paced — slower than typical SaaS)
-- Possibly delegate to **UX Architect** agent for the CSS-system pass and contrast audit
+Token system landed in `hadouta-web/src/app/globals.css` as a 3-tier hierarchy:
+- **Tier 1**: raw Hadouta palette as CSS vars (`--hadouta-cream`, `--hadouta-terracotta`, `--hadouta-ochre`, `--hadouta-teal`, `--hadouta-brown`, `--hadouta-blush`). Values in oklch (perceptually-uniform; clean adjustments for Phase 3 if needed).
+- **Tier 2**: shadcn semantic mapping (`--background`, `--primary`, `--secondary`, `--muted`, `--accent`, etc.) wired to tier 1. All shadcn components inherit automatically.
+- **Tier 3**: Tailwind utilities exposed via `@theme inline` (`bg-hadouta-terracotta`, `text-hadouta-brown`, etc.).
+
+Typography 3-tier system live in `layout.tsx` via `next/font/google`:
+- **Tajawal** (body & UI, kept) — `--font-sans`
+- **El Messiri** (general headers; Egyptian-designed) — `--font-heading`
+- **Aref Ruqaa** (decorative; max-1-per-page rule) — `--font-display`
+- **Fraunces** (Latin companion; replaces Inter) — `--font-latin`
+
+Radius scale per brand brief: `--radius-tight 4px`, `--radius-lg 8px` (buttons/inputs base), `--radius-xl 16px` (cards), `--radius-2xl 24px` (modals/sheets/hero panels). Avoids both no-radius corporate and pill-radius childish-bubbly extremes.
+
+Motion timing per brand brief storyteller-paced: `--motion-quick 200ms` (button hover), `--motion-paced 400ms` (modal/drawer/section reveal), `--motion-page 600ms` (page-turn-feel state transitions).
+
+WCAG AA contrast verified across every meaningful pairing: brown-on-cream 12.6:1 (AAA), cream-on-terracotta 5.0:1 (AA Large for buttons), cream-on-teal 5.0:1 (AA Large), brown-on-ochre 6.5:1 (AA), brown-on-blush 9.5:1 (AAA). One documented edge: terracotta is a CTA / bold-display color, not a body-text background — body content on warm bands should use ochre or blush.
+
+Dark mode kept as a stub (mirrors light-mode values) — deferred per brand brief; real dark-mode design happens when warranted (likely after MVP, alongside admin dashboard work).
+
+UX Architect agent delegation deferred — direct implementation matched the actual decisions captured in v1.1 cleanly. Agent option remains available for Phase 3.
 
 ### Phase 2.5 — Decorative-motif asset library
 
@@ -645,7 +660,7 @@ Substantive brand refresh review at **18 months post-launch (March 2028)**. Incr
 
 ## Open decisions / parking lot
 
-1. **Latin companion font** — Fraunces vs Spectral vs other. Decide in Phase 2 token work.
+1. **Latin companion font** — ✅ **decided 2026-05-02 (session 5)**: Fraunces. Loaded in `layout.tsx`, exposed as `--font-latin`. Revisit during Phase 3 Figma if Spectral feels better in context.
 2. **Logotype design** — Aref Ruqaa as wordmark or commissioned hand-lettered logotype? Defer to Phase 3 visual identity work; trademark protection requires the distinctive mark.
 3. **Photographic vs illustrated brand imagery** — at any point should we use photography (real Egyptian families, real Cairo streets) on the website? Or all illustration? Likely all illustration for MVP, photography later as part of social-proof / testimonials.
 4. **Multi-style architecture (ADR-019)** — formally write the ADR after this brief locks. Captures the architectural-from-day-one decisions noted in the Illustration Style section above.

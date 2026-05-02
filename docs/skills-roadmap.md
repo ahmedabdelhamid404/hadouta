@@ -79,6 +79,21 @@ Patterns to watch for during the build. When a pattern repeats **3+ times**, cod
 - **Pattern**: take recent rejections + update validator system prompt with new few-shot examples + run regression suite + deploy if green
 - **When to write**: when validator iteration becomes routine (likely Sprint 5+)
 
+### 14. `validate-drizzle-migration` (flagged session 3, reinforced session 5)
+- **Pattern**: pre-flight a generated migration SQL against a scratch DB before committing — catches CASCADE-redundant DROPs and similar Postgres-dependency-semantic gotchas that schema-syntax review misses
+- **When to write**: after the next 1-2 schema migrations bite. Session 5's `0002_phone_otp_and_multi_style.sql` was hand-written (drizzle-kit interactive prompt unavailable); same family of risk
+- **What it does**: takes a generated migration → spins up a scratch Postgres → applies migration → reports any errors (constraint redundancy, type-cast issues, default-value semantics)
+
+### 15. `rotate-leaked-credential` (flagged session 5)
+- **Pattern**: when a credential leaks to chat: revoke at provider dashboard → create replacement with same scopes → update `.env.local` → propagate to all deployed env vars (Railway, Vercel, etc.) → smoke-test → verify old token now 401s
+- **When to write**: after 3+ rotations. We've done 3 already (Vercel CLI session 4, Sentry + PostHog session 5)
+- **What it does**: takes provider name + credential name → walks the rotation steps → confirms downstream env-var propagation
+
+### 16. `bypass-mcp-via-rest-api` (flagged session 5)
+- **Pattern**: when a hosted MCP server fails (OAuth bug, scope mismatch, protocol gap), build a `scripts/<service>/` wrapper directory + a runbook that wraps common queries against the service's REST API using a personal API key in `.env.local`
+- **When to write**: when this happens for a 3rd service (currently Sentry + PostHog; Figma may be next)
+- **What it does**: scaffolds the runbook + .env.example + a few starter scripts based on a provider name + auth pattern
+
 ---
 
 ## Anti-patterns (don't write these as skills)
@@ -99,4 +114,4 @@ Patterns to watch for during the build. When a pattern repeats **3+ times**, cod
 
 ---
 
-**Last updated**: 2026-04-30 by Claude
+**Last updated**: 2026-05-02 (session 5) by Claude — added candidates #14-16 (validate-drizzle-migration, rotate-leaked-credential, bypass-mcp-via-rest-api). All flagged but none yet at 3-instance threshold for codification.
