@@ -73,20 +73,25 @@ This is a strategic choice: the cultural-specificity moat (ADR-002) is "Egyptian
 
 The brand promises Egyptian cultural specificity. That promise needs a credibility foundation, otherwise it's vulnerable to one viral attack ("Hadouta is just AI faking Egyptian-ness").
 
-**The Hadouta promise:**
-- **Every Hadouta book is reviewed by an Egyptian human before delivery.** Per ADR-013, the first ~200 books pass through a manual approval gate; that gate is staffed by Egyptian cultural reviewers. After the gate phases out, Egyptian humans remain in the loop on theme template approval, style validation, and ongoing cultural QA.
-- **Our writers and illustrator references are Egyptian.** Per ADR-002, content production includes Egyptian writers + illustrators (~10K EGP partnerships). The AI scales their craft; it does not replace their judgment. Theme catalogs, story templates, and reference illustration libraries are seeded by Egyptian creators.
-- **AI is the brush, not the artist.** Hadouta uses AI to scale Egyptian-led creative direction across thousands of personalizations. The cultural direction comes from humans; the AI executes within that direction.
+**The Hadouta promise (post-ADR-020 / 2026-05-02 strategic pivot):**
+- **Every Hadouta book is reviewed by an Egyptian human before delivery.** Per ADR-013, every book passes through a manual approval gate staffed by Egyptian cultural reviewers — Ahmed initially, expanded team eventually. The reviewer is the only human in the loop and the canonical quality gate.
+- **AI is engineered for Egyptian cultural authenticity.** System prompts include explicit Egyptian-context anchors (Cairo settings, Egyptian Arabic register, religion-neutral pan-Egyptian theme palette, anti-tourist/anti-Gulf stance, brand brief's three-worlds image set as few-shot examples). Cultural-specificity is engineered into prompts + validators, not hand-curated by human creators.
+- **Validators framework enforces cultural rules** (per ADR-012). Rejection categories from the manual review gate feed back into validator regeneration so the system learns from each rejection.
 
-**Why this matters:** ADR-002 is the strategic moat. Brand promises that aren't backed by operational commitments collapse the first time someone screenshots a culturally-wrong book on Twitter. Surfacing the ADR-013 + ADR-002 commitments as brand promises converts the most-attackable claim into the most-defensible one — at zero marginal cost (we're doing the work anyway).
+**Why this matters:** ADR-002 is the strategic moat (Egyptian cultural specificity). The original implementation assumed Egyptian writers + illustrators would seed the templates. ADR-020 (2026-05-02) shifted to AI-only generation with human review only. The moat now lives in three operational commitments that ARE actually executed: Egyptian-tuned prompts, validators framework, manual review gate.
+
+**What this means concretely:**
+- Customer-facing copy must NOT claim Egyptian writers/illustrators design templates (was true pre-ADR-020, false now).
+- Customer-facing copy SHOULD lead with the Egyptian human review claim (true and operationally costly).
+- Output-describing language ("Egyptian-tuned story", "designed for Egyptian children") is honest; process-describing language about humans creating content is not.
 
 ### How to talk about production publicly — the quiet middle path
 
-**Internal reality (this is what's actually true):**
-- Story text: AI-generated (Claude per ADR-006), built on theme templates that Egyptian writers seeded
-- Illustrations: AI-generated (Nano Banana 2/Pro + GPT Image 2 fallback per ADR-006), built on watercolor reference style that Egyptian illustrators set
-- Theme catalog: AI-generated content built on templates Egyptian writers wrote
-- Per-book quality gate: Egyptian human reviewer per ADR-013
+**Internal reality (post-ADR-020 / 2026-05-02 — this is what's actually true):**
+- Story text: AI-generated (Claude per ADR-006), driven by Egyptian-tuned system prompts (no human-written templates)
+- Illustrations: AI-generated (Nano Banana 2/Pro + GPT Image 2 fallback per ADR-006), driven by Egyptian-tuned style prompts (no human-set reference style)
+- Theme catalog: defined by us internally with cultural cues; AI generates each instance from the theme spec
+- Per-book quality gate: Egyptian human reviewer per ADR-013 — the ONLY human in the production loop
 
 **Customer-facing position (added 2026-05-02):**
 
