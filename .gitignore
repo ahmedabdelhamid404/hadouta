@@ -23,3 +23,7 @@ hadouta-web/
 # Third-party reference screenshots captured during research (copyright not ours; reference only)
 magicalchildrensbook-landing.png
 *-reference.png
+
+# Operations credentials (.env.local holds Sentry + PostHog tokens for runbook scripts)
+.env.local
+.env
