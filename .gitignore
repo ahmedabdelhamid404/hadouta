@@ -16,3 +16,10 @@ hadouta-web/
 
 # Claude Code session-local artifacts (personal allowlist, not shared)
 .claude/settings.local.json
+
+# Playwright MCP runtime artifacts
+.playwright-mcp/
+
+# Third-party reference screenshots captured during research (copyright not ours; reference only)
+magicalchildrensbook-landing.png
+*-reference.png
