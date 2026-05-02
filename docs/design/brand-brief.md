@@ -80,6 +80,50 @@ The brand promises Egyptian cultural specificity. That promise needs a credibili
 
 **Why this matters:** ADR-002 is the strategic moat. Brand promises that aren't backed by operational commitments collapse the first time someone screenshots a culturally-wrong book on Twitter. Surfacing the ADR-013 + ADR-002 commitments as brand promises converts the most-attackable claim into the most-defensible one — at zero marginal cost (we're doing the work anyway).
 
+### How to talk about production publicly — the quiet middle path
+
+**Internal reality (this is what's actually true):**
+- Story text: AI-generated (Claude per ADR-006), built on theme templates that Egyptian writers seeded
+- Illustrations: AI-generated (Nano Banana 2/Pro + GPT Image 2 fallback per ADR-006), built on watercolor reference style that Egyptian illustrators set
+- Theme catalog: AI-generated content built on templates Egyptian writers wrote
+- Per-book quality gate: Egyptian human reviewer per ADR-013
+
+**Customer-facing position (added 2026-05-02):**
+
+We lead with the Egyptian human curation + review + craft + effort. We **do not lead with "AI generated"** — and we **never claim "hand-painted" or "manually written"** either. Quiet middle path: describe what's true about production without volunteering AI as the headline.
+
+**Lead with these (true and brand-positive):**
+- "كتاب مصمم بعناية لطفلك" / "Carefully designed for your child"
+- "فريقنا المصري بيراجع كل كتاب قبل ما يوصلك" / "Our Egyptian team reviews every book before delivery"
+- "كتّاب ورسامين مصريين بيصمموا قوالب حكاياتنا" / "Egyptian writers and illustrators design our story templates"
+- "حدوتة جاهزة في ٢-٣ أيام" / "Ready in 2-3 days" (effort signal — slower than AI-fast competitors by design)
+
+**Avoid these (false or off-brand):**
+- ❌ "كتاب مرسوم باليد" / "hand-drawn / hand-painted" — false, never use
+- ❌ "الراوي بيكتب حدوتة طفلك" / "The Storyteller writes your child's story" — implies a literal human author, false
+- ❌ "AI يرسم لطفلك" / "AI illustrates for your child" — true but not the headline; quiet middle path means AI is implementation detail, not brand identity
+- ❌ "في دقائق" / "in minutes" — speed claim cheapens the brand; even if technically achievable, Hadouta uses time-as-care-signal
+
+**Time as feature, not bug.** The 2-3 day production window is a brand promise, not an apology. Competitors leading with "in minutes" signal AI-fast-AI-cheap. Hadouta's slower window signals review + care + Egyptian human attention.
+
+**The Storyteller voice STAYS** as the brand archetype — it's the *tone* of customer-facing copy (warm, sensory, second-person, paced), not a claim about who literally writes the book. Voice ≠ production model.
+
+**Edge case — direct customer questions about AI:**
+If a customer (in support, FAQ, social media) directly asks "is this AI generated?", the honest answer is:
+> "الذكاء الاصطناعي بيكتب ويرسم بناء على قوالب صممها فريقنا المصري، وفريقنا بيراجع كل كتاب قبل ما يوصلك."
+> "AI writes and illustrates based on templates our Egyptian team designed, and our team reviews every book before it reaches you."
+
+Honest. Just not volunteered as the lead.
+
+**Why this position over loud-AI-transparency:** premium positioning ≠ loud-AI-badge. AI is commodity in consumer minds (price-sensitive parents associate "AI" with cheap/fast/template-y output). What differentiates Hadouta is the Egyptian curation layer + manual review gate + cultural specificity (ADR-002 moat). Lead with that. Loud-AI competitors (e.g., Hekaya — see `docs/design/competitive-research/2026-05-02-hekaya-ai/findings.md`) lead with "مدعوم بالذكاء الاصطناعي" badge; Hadouta differentiates by NOT making AI the brand headline.
+
+**Test for any customer-facing copy** — would an Egyptian parent who reads this AND THEN learns the books use AI feel deceived?
+- "Carefully designed and reviewed by our Egyptian team, ready in 2-3 days" → would NOT feel deceived (literally true) → use
+- "Hand-painted by Egyptian artists" → would feel deceived → never use
+- "AI-generated personalized children's books" → wouldn't feel deceived but loses brand differentiation → avoid as headline
+
+This rule applies across **all customer-facing surfaces**: landing page, order wizard, WhatsApp templates, ad creative, support replies, FAQ, social media bios, press materials, app store descriptions.
+
 ### The North Star image set
 
 When designers / illustrators / writers ask "does this feel like Hadouta?" — the test is whether it feels like ANY of these three Egyptian worlds, all equally canonical:

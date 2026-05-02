@@ -9,7 +9,7 @@
 **Project**: Hadouta (حدوتة) — Egyptian AI personalized children's book platform
 **Launch target**: September 1, 2026
 **Build window**: ~22 weeks from 2026-04-30
-**Current phase**: ✅ Bootstrap complete · ✅ Public repos live · 🟢 **Sprint 1 — Ready to Start**
+**Current phase**: ✅ Bootstrap complete · ✅ Public repos live · 🟢 **Sprint 1 Track A ~99.5%** (wizard frontend remains)
 
 ### Public GitHub repos (all live as of 2026-05-01)
 - 📚 **Umbrella + docs**: https://github.com/ahmedabdelhamid404/hadouta
@@ -49,50 +49,79 @@ Both repos running locally + landing page deployed live + first ad campaign gene
 
 ## Resume here (next concrete action)
 
-> **🟢 Hadouta is LIVE on the internet** as of 2026-05-01 (session 4). Frontend at https://hadouta-web.vercel.app, backend at https://hadouta-backend-production.up.railway.app, end-to-end waitlist flow verified. Custom domain `hadouta.com` not yet registered (Track B).
+> **🟢 Phase 3 (screen design) DONE** (session 6, 2026-05-02). 13 surface-design picks made via brainstorming + visual companion wireframes. All locked in `docs/design/specs/2026-05-02-phase-3-design-spec.md` (~742 lines). Brand brief amended with "How to talk about production publicly — quiet middle path" section codifying AI-honesty rule across all customer-facing copy.
 >
-> **🟢 ADR-018 phone-first auth backend implemented + tested** (session 5, 2026-05-02). Better-Auth phone-number plugin wired with Twilio WhatsApp+SMS multi-tier transport. requireEmailVerification dropped. 5/5 backend tests passing. Schema migration `0002` applied. Pushed: `hadouta-backend@f0569af`.
+> **🟢 Phase 5 Part 1 (backend) SHIPPED to branch** (session 6, 2026-05-02). Migration `0003_phase_5_wizard_schema.sql` hand-written + applied to Neon dev. New tables: `moral_values` (8 seeded), `supporting_characters`, `photos`. Extended `themes` (suitable_age_bands, descriptions, illustration_key, active) + `orders` (~17 new columns). New API routes: `/api/orders/draft`, `/api/orders/:id`, `/api/catalog/themes?ageBand=`, `/api/catalog/moral-values`. Committed `hadouta-backend@0bfccec` on `feat/phase-5-implementation` branch. **NOT YET PUSHED.**
 >
-> **🟢 Sentry + PostHog observability fully wired** (session 5). Both code SDKs initialized in both repos with privacy posture (mask-all-inputs, identified-only profiles, no auto-PII). Both Sentry projects (hadouta-web + hadouta-backend) created via API. PostHog renamed to "Hadouta" (EU instance). Vercel + Railway env vars set. MCP integration deferred (Claude Code OAuth bug); REST-API runbook + scripts at `docs/operations/observability-runbook.md` is the canonical query path until MCP is fixed.
+> **🟢 Phase 5 Part 2 (landing page) SHIPPED to branch** (session 6, 2026-05-02). Full Phase 3 design composed: 9 section components in `src/components/landing/` (site-header, hero, storyteller-setup, sample-preview, how-it-works, theme-gallery-preview, trust-band, pricing, faq, site-footer). All copy applies AI-honesty quiet middle path. CTAs route to `/wizard` (not yet implemented). Committed `hadouta-web@e75a8cf` on `feat/phase-5-implementation` branch. **NOT YET PUSHED.**
 >
-> **🟢 Phase 2 design tokens shipped** (session 5). `globals.css` now carries the full Hadouta palette (cream/terracotta/ochre/teal/brown/blush) as 3-tier tokens (raw → semantic → Tailwind utilities). Typography stack live: Tajawal + El Messiri + Aref Ruqaa + Fraunces. Radius + motion scales per brand brief. WCAG AA verified across pairings. All shadcn components inherit automatically.
+> **⏸️ Phase 5 Tasks 1.9 + 1.10 DEFERRED** (need credentials):
+>   - Photo upload backend (Cloudflare R2) — Ahmed creates R2 bucket + access keys
+>   - Paymob payment intent backend — Ahmed completes merchant onboarding + grabs API key + integration IDs + iframe ID + HMAC secret
 >
-> ---
->
-> **Step 1 — Phase 3: Figma screen designs** (next code-adjacent task). Brand brief v1.1 + Phase 2 tokens give the designer (or me, via Figma MCP) everything needed to mock up screens. Re-auth Figma MCP first — likely hit the same OAuth bug class as Sentry/PostHog; bearer-token alternative may be needed. Build landing, order wizard, "your book is being made," confirmation, account screens. Multi-session iteration. UI Designer agent available for focused multi-screen passes. Alternative if Figma MCP keeps failing: Ahmed designs directly via Figma web, commits screenshots/links to `docs/design/screens/`, I implement from those via the `figma:figma-implement-design` skill.
->
-> **Step 2 — Frontend signup form rework (Phase 5 partial).** Replace email/password form with phone-OTP UI wired to backend's ADR-018 endpoints (`/api/auth/phone-number/send-otp` + `/api/auth/phone-number/verify`). Best done after Phase 3 Figma screens, but can run independently if Ahmed wants code velocity. ~2-3 hours.
->
-> **Step 3 — Track B kickoff (Ahmed-owned, long pole for "real launch")**: domain registration (`hadouta.com`), trademark search (WIPO + Egyptian Trademark Office), social handle reservation (`@hadouta` on IG/TikTok/Facebook), Bosta merchant signup, Cairo print-shop outreach, ad campaign creatives, Meta Business Verification + Twilio WhatsApp sender setup (long pole — 3-7 days FB review). Start in parallel with code work.
->
-> **Step 4 — Phase 2.5: commission Egyptian decorative-motif asset library** (Track B / paid). ~10K EGP, 2-4 weeks lead time. Stock libraries are Maghrebi/Iranian, not Egyptian. AI-generated patterns undermine cultural-specificity moat per ADR-002. See `docs/design/brand-brief.md` "Decorative-motif source" section.
->
-> **Step 5 — Custom domain wire-up.** Once `hadouta.com` is registered: point apex to Vercel project, `api.hadouta.com` to Railway service. Update `FRONTEND_URL` (Railway) and `NEXT_PUBLIC_API_URL` (Vercel) to the custom domains. Update Better-Auth's expected origins.
->
-> **Step 6 — Real Resend API key.** Currently a placeholder string passes the prod-mode env guard (`re_placeholder_obtain_real_key_post_sprint1`). Email-OTP fallback flow (ADR-018 tier 4) needs a real key. Free-tier sufficient for early Sprint 1.
->
-> **Step 7 — Railway GitHub auto-deploy integration.** Backend currently only deploys via explicit `railway up`. Wire push-to-deploy via Railway dashboard. After this, Vercel and Railway have parity on the deploy trigger.
+> Code patterns ready in `docs/design/specs/2026-05-02-phase-5-implementation-plan.md` Tasks 1.9 + 1.10 — activate when creds available.
 >
 > ---
 >
-> **Token-rotation status (closed — all leaked tokens revoked)**: Vercel `vca_` (session 4), Sentry `sntryu_6860d6...` and PostHog `phx_QHvSdJ...` (both session 5) were all revoked by Ahmed; new credentials sit in `.env.local` (umbrella, gitignored). Pattern documented in `docs/operations/observability-runbook.md`.
+> **Step 1 — Push existing branches** (1 min, do first). Both sub-repos have 1 unpushed commit on `feat/phase-5-implementation`:
+>   ```bash
+>   cd hadouta-backend && git push -u origin feat/phase-5-implementation
+>   cd ../hadouta-web && git push -u origin feat/phase-5-implementation
+>   ```
+>   Vercel auto-deploys preview on push. Verify landing renders on preview URL.
 >
-> **Sprint-2 follow-ups (do not lose track)**:
-> - Rate-limit hardening + Redis-backed secondary-storage on auth endpoints before horizontal scale
-> - Session `ip_address` / `user_agent` PII retention policy (needs ADR before storing or disabling)
-> - OpenAPI exposure of auth routes (Better-Auth bypasses `OpenAPIHono.openapi()`)
-> - Test-data cleanup helper (auth tests + e2e tests leak `test-*@example.com` and `e2e-test-2026-05-01@hadouta.local` rows into dev Neon)
-> - "Secrets must use stdin, never flags" — codify as project rule + skill candidate
-> - Vercel Node version pinning (current: auto-picked 24.x; local dev: 20.19.5) — pin via `vercel.json` if runtime divergence surfaces
-> - Migration `0002_snapshot.json` regeneration — drizzle-kit's interactive prompt blocked snapshot generation in session 5; next clean `drizzle-kit generate` will regenerate based on current schema; non-blocking
-> - Drizzle migration validation pre-flight skill ("validate-drizzle-migration") — flagged from session 3 still relevant
-> - Latin companion font final pick — Fraunces selected in session 5 Phase 2; revisit during Phase 3 Figma if Spectral feels better in context
+> **Step 2 — Phase 5 Part 3: Wizard frontend** (next big workstream, ~3-4 days solo). 9 tasks (3.1-3.9) in implementation plan:
+>   - 3.1 Wizard route + Zustand state store + API client wrapper
+>   - 3.2 Stepper component
+>   - 3.3 Step 1 child info form (react-hook-form + Zod)
+>   - 3.4 Step 2 photo OR description fork (path picker + photo upload + description form + skin-tone picker)
+>   - 3.5 Step 3 supporting characters (invitation + per-character mini-form)
+>   - 3.6 Step 4 story details (theme grid + moral grid + custom scene + occasion)
+>   - 3.7 Step 5 review + dedication + edit-jumps
+>   - 3.8 Step 6 phone OTP + Paymob redirect (wires to existing Better-Auth phone-number plugin from session 5)
+>   - 3.9 Step 7 confirmation
+>
+>   Subagent-driven dispatch can compress to 2-3 days per the implementation plan's execution handoff.
+>
+> **Step 3 — Track B (Ahmed-owned, gates real launch)**:
+>   - Domain `hadouta.com` registration + DNS to Vercel (apex) + Railway (`api.hadouta.com`)
+>   - Cloudflare R2 bucket `hadouta-photos` + access keys (unblocks Phase 5 Task 1.9)
+>   - Paymob merchant onboarding + API keys + integration IDs (unblocks Phase 5 Task 1.10)
+>   - Meta Business Verification + Twilio WhatsApp sender (long pole — 3-7 days FB review; needed for production WhatsApp OTP delivery)
+>   - Trademark search + `@hadouta` social handle reservation
+>   - Egyptian decorative-motif library commission (~10K EGP, 2-4 weeks lead time)
+>   - Egyptian writers + illustrators commissions per ADR-002 (theme template seeding + watercolor reference style)
+>   - Team photos for landing trust band (writers, illustrators, reviewers)
+>   - Bosta merchant signup + Cairo print-shop outreach (v1.5 print upgrade)
+>   - Ad creatives (FB+IG) + Real Resend API key
+>
+> **Step 4 — Phase 5 Part 4: production wiring** (after Part 3 completes):
+>   - End-to-end smoke test (manual flow from landing → wizard → checkout → confirmation)
+>   - Production env vars on Vercel + Railway (R2, Paymob, FRONTEND_URL pointing at hadouta.com once registered)
+>   - WhatsApp template submission to Meta (auth template auto-approves; utility/marketing 24-48h review)
+>   - Custom domain wire-up
+>
+> **Step 5 — Sprint 2 followups recorded** (don't lose track):
+>   - Rate-limit hardening + Redis-backed secondary-storage on auth endpoints
+>   - Session `ip_address` / `user_agent` PII retention ADR
+>   - OpenAPI re-exposure of new wizard routes (currently plain Hono — frontend uses direct fetch)
+>   - Test-data cleanup helper (leaks `test-*@example.com`, `e2e-test-2026-05-01@hadouta.local` into dev Neon)
+>   - Drizzle migration validation pre-flight skill ("validate-drizzle-migration") — 0002 + 0003 both hand-written; recurring pain
+>   - Real watercolor hero illustration (currently gradient placeholder)
+>   - Theme card SVG icon library (currently emoji placeholders)
+>   - Real waitlist-form.tsx removal (kept unused after landing rewrite)
+>   - Vercel Node version pinning
+>   - Latin companion font revisit (Fraunces vs Spectral)
+>
+> ---
+>
+> **Token-rotation status (closed — all leaked tokens revoked)**: 3 tokens rotated across sessions 4 + 5. Pattern documented in `docs/operations/observability-runbook.md`.
 
 ---
 
-## Sprint 1 — In Progress (Sessions 2 + 3 + 4 + 5, 2026-05-01 to 2026-05-02)
+## Sprint 1 — In Progress (Sessions 2-6, 2026-05-01 to 2026-05-02)
 
-Track A foundation work ~98% complete. **Hadouta is LIVE on the internet, observability is wired end-to-end, design tokens shipped, ADR-018 backend implemented.**
+Track A foundation work ~99.5% complete. **Hadouta is LIVE on the internet, observability is wired, design tokens shipped, ADR-018 backend implemented, Phase 3 designs locked, Phase 5 Parts 1+2 (backend wizard schema/APIs + landing page) shipped to branch.**
 - ✅ Both repos installed + dev servers boot cleanly (`pnpm dev` works)
 - ✅ Backend `/health` and `/waitlist` (Zod-validated) respond correctly
 - ✅ End-to-end browser test: form submission flows Next.js → Hono → Neon → DB row
@@ -113,13 +142,17 @@ Track A foundation work ~98% complete. **Hadouta is LIVE on the internet, observ
 - ✅ **CLIs installed + authenticated** (session 4) — `vercel`, `railway`, `neonctl` all in `~/.nvm/.../bin/`, all logged in.
 - ✅ **Auth strategy pivoted (ADR-018) + backend implemented** (sessions 4+5) — Better-Auth phone-number plugin wired, Twilio WhatsApp tier-1 + SMS tier-2 multi-tier transport, requireEmailVerification dropped, lazy email verification only. Schema migration `0002` applied (phoneNumber, phoneNumberVerified, lastVerifiedAt, supportedStyles, style + CHECK constraint). 5/5 backend tests passing. Frontend signup form rework still pending (best after Phase 3 Figma).
 - ✅ **Sentry + PostHog wired** (session 5) — `@sentry/node` + `@sentry/nextjs` + `posthog-js` initialized in both repos with privacy posture (mask-all-inputs, identified-only, no auto-PII). Sentry projects `hadouta-web` (id 4511319736189008) + `hadouta-backend` (id 4511319962812496) created via API. PostHog renamed to "Hadouta" (project 170756, EU instance). Vercel + Railway env vars set. EU-host default fixed in `PostHogProvider.tsx`. MCP setup deferred (Claude Code OAuth bug); REST-API runbook + scripts at `docs/operations/observability-runbook.md` is the canonical query path.
-- ✅ **Phase 2 design tokens shipped** (session 5) — `globals.css` carries the full Hadouta palette (cream/terracotta/ochre/teal/brown/blush) as 3-tier tokens (raw `--hadouta-*` → semantic shadcn → Tailwind utilities). Typography stack live: Tajawal (body), El Messiri (headers, Egyptian-designed), Aref Ruqaa (decorative, max-1-per-page rule), Fraunces (Latin companion). Radius scale (4/8/16/24px) + storyteller-paced motion timing (200/400/600ms) per brand brief. WCAG AA verified. Dark mode kept as a stub (deferred — no current product requirement).
-- ⏸️ **Phase 3 Figma screen designs** — next code-adjacent task. Re-auth Figma MCP first (likely needs bearer-token alternative). Build landing, order wizard, "your book is being made," confirmation, account screens.
-- ⏸️ **Frontend signup form rework (Phase 5 partial)** — replace email/password UI with phone-OTP form wired to ADR-018 backend endpoints. Best after Phase 3 Figma but can run independently.
-- ⏸️ Custom domain `hadouta.com` — Track B (Ahmed-owned), not started
-- ⏸️ Track B (Ahmed) — domain, trademark, handles, services, ad campaign, **Meta Business Verification + Twilio WhatsApp setup** (ADR-018 long pole), **Egyptian decorative-motif asset library commission** (Phase 2.5 from brand brief, ~10K EGP) — not started
+- ✅ **Phase 2 design tokens shipped** (session 5) — `globals.css` carries the full Hadouta palette (cream/terracotta/ochre/teal/brown/blush) as 3-tier tokens (raw `--hadouta-*` → semantic shadcn → Tailwind utilities). Typography stack live: Tajawal (body), El Messiri (headers, Egyptian-designed), Aref Ruqaa (decorative, max-1-per-page rule), Fraunces (Latin companion). Radius scale (4/8/16/24px) + storyteller-paced motion timing (200/400/600ms) per brand brief. WCAG AA verified. Dark mode kept as a stub.
+- ✅ **Phase 3 screen design DONE via wireframing** (session 6) — wireframed landing + 7 wizard steps in visual companion (skipped Figma due to OAuth bugs; brand brief was so locked that Figma intermediate added no value). 13 surface-design picks made. Output: `docs/design/specs/2026-05-02-phase-3-design-spec.md` (~742 lines). 3 upstream structural decisions (photo-OR-description / theme combinatorial / age-band tagging) extend ADR-005 — captured in `docs/design/2026-05-02-wizard-design-decisions.md`. **Brand brief amended with AI-honesty production rule** (quiet middle path: lead with Egyptian human review + 2-3 day care, never claim hand-painted, don't lead with "AI generated").
+- ✅ **Phase 5 Part 1 backend (wizard schema + APIs) on branch** (session 6) — migration `0003_phase_5_wizard_schema.sql` (hand-written, drizzle-kit interactive prompt issue same as 0002), 3 new tables (`moral_values`, `supporting_characters`, `photos`), extended `themes` + `orders` (~17 columns), 8 themes + 8 moral values seeded, new routes: orders CRUD + catalog. `hadouta-backend@0bfccec` on `feat/phase-5-implementation`, NOT YET PUSHED.
+- ✅ **Phase 5 Part 2 landing page on branch** (session 6) — full Phase 3 design composed in `app/page.tsx`: 9 section components (hero option A + section rhythm option C). All copy applies AI-honesty middle path. CTAs route to `/wizard`. `hadouta-web@e75a8cf` on `feat/phase-5-implementation`, NOT YET PUSHED.
+- ⏸️ **Phase 5 Part 3 wizard frontend** — 9 tasks (3.1-3.9) in implementation plan. ~3-4 days solo. Next big workstream.
+- ⏸️ **Phase 5 Task 1.9 photo upload (Cloudflare R2)** — code patterns in plan; needs R2 bucket + access keys (Track B).
+- ⏸️ **Phase 5 Task 1.10 Paymob payment intent** — code patterns in plan; needs Paymob merchant onboarding + API keys + integration IDs (Track B).
+- ⏸️ **Phase 5 Part 4 production wiring** — e2e smoke, env vars, WhatsApp template submission, custom domain.
+- ⏸️ Track B (Ahmed-owned) — domain, trademark, handles, services, ad campaign, Meta Business Verification + Twilio WhatsApp setup, R2 bucket, Paymob onboarding, Egyptian decorative-motif library commission, team photos, Egyptian writer+illustrator commissions.
 
-Detailed logs: `docs/session-notes/2026-05-01-session-2.md` (DB + types), `docs/session-notes/2026-05-01-session-3.md` (auth foundation), `docs/session-notes/2026-05-01-session-4.md` (deploys live + auth pivot), `docs/session-notes/2026-05-02-session-5.md` (ADR-018 backend impl + Sentry/PostHog wiring + observability runbook + Phase 2 tokens).
+Detailed logs: `docs/session-notes/2026-05-01-session-2.md` (DB + types), `docs/session-notes/2026-05-01-session-3.md` (auth foundation), `docs/session-notes/2026-05-01-session-4.md` (deploys live + auth pivot), `docs/session-notes/2026-05-02-session-5.md` (ADR-018 backend impl + Sentry/PostHog wiring + observability runbook + Phase 2 tokens), `docs/session-notes/2026-05-02-session-6.md` (Phase 3 designs + Phase 5 Parts 1+2 + brand brief AI-honesty amendment).
 
 ---
 
@@ -168,7 +201,7 @@ Bootstrap session deliverables — all complete:
 | Sprint | Window | Focus | Status |
 |---|---|---|---|
 | **0** | 2026-04-30 | Bootstrap infra + ADRs + plans | ✅ Complete |
-| **1** | Weeks 1–2 | Foundation: skeletons + landing live + ad campaign | 🟡 In Progress (Track A ~98% — auth backend done, observability wired, design tokens shipped; remaining: Figma + signup form. Track B 0%) |
+| **1** | Weeks 1–2 | Foundation: skeletons + landing live + ad campaign | 🟡 In Progress (Track A ~99.5% — Phase 3 designs done, Phase 5 Parts 1+2 shipped to branch. Remaining: wizard frontend (Part 3) + production wiring (Part 4). Track B 0%) |
 | **2** | Weeks 3–4 | Validation infrastructure + content production kickoff | ⏸️ Skeletoned |
 | **3** | Weeks 5–8 | AI pipeline foundation (story gen + universal validators) | ⏸️ Skeletoned |
 | **4** | Weeks 9–12 | Customer ordering flow + admin review queue | ⏸️ Skeletoned |
@@ -197,4 +230,4 @@ None currently. Next session can begin executing Sprint 1 immediately.
 
 ---
 
-**Last updated**: 2026-05-02 (session 5) by Claude. Sprint 1 Track A ~98% complete — auth backend implemented + tested (ADR-018), Sentry+PostHog wired in code AND in production env (both repos), Phase 2 design tokens shipped (full Hadouta palette + 4-font typography stack + WCAG AA verified). Frontend signup form rework + Phase 3 Figma designs are the remaining Track A items; both can begin next session. Track B (Ahmed-owned) still at 0% — domain registration, Meta Business Verification, decorative-motif library all gating real launch. All leaked tokens revoked + rotated (3 total). Observability via REST-API runbook (`docs/operations/observability-runbook.md`) since Claude Code's MCP OAuth has a known bug.
+**Last updated**: 2026-05-02 (session 6) by Claude. Sprint 1 Track A ~99.5% — **Phase 3 screen design DONE** (wireframing in visual companion, 13 surface-design picks locked into `docs/design/specs/2026-05-02-phase-3-design-spec.md`), **Phase 5 Parts 1+2 SHIPPED to branch** (backend wizard schema + API routes + 8-theme + 8-moral-value seeds; full landing page with 9 section components per brand-aligned design). Brand brief amended with AI-honesty quiet-middle-path rule. Implementation plan at `docs/design/specs/2026-05-02-phase-5-implementation-plan.md` (~2790 lines) — Phase 5 Part 3 (wizard frontend, 9 tasks) is the next workstream. Both sub-repos on `feat/phase-5-implementation` branch with 1 commit each, NOT YET PUSHED. Track B (Ahmed-owned) still at 0% — Meta Business Verification, R2 + Paymob credentials, domain registration all gating real launch.

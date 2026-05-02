@@ -27,3 +27,6 @@ magicalchildrensbook-landing.png
 # Operations credentials (.env.local holds Sentry + PostHog tokens for runbook scripts)
 .env.local
 .env
+
+# Visual-companion brainstorming session artifacts (mockup HTML + state)
+.superpowers/
