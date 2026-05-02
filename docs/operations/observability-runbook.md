@@ -133,19 +133,15 @@ Rotation is one minute per service:
 
 ## Open setup TODOs
 
-- [ ] **Create `hadouta-backend` Sentry project** at https://my-company-4vi.sentry.io/settings/projects/ (Platform: Node.js, Name: `hadouta-backend`). After creating, fetch its DSN with `curl -s -H "Authorization: Bearer $SENTRY_AUTH_TOKEN" "https://sentry.io/api/0/projects/$SENTRY_ORG_SLUG/hadouta-backend/keys/" | jq` and put in `.env.local` as `SENTRY_DSN_HADOUTA_BACKEND`. Set as `SENTRY_DSN` on Railway.
+- [x] **Create `hadouta-backend` Sentry project** ✅ done 2026-05-02. Project id `4511319962812496`, platform `node`, slug `hadouta-backend`. DSN stored in `.env.local` as `SENTRY_DSN_HADOUTA_BACKEND`.
 
-- [ ] **Set Vercel env vars** for the frontend (Sentry + PostHog SDK init):
-  ```
-  NEXT_PUBLIC_SENTRY_DSN=<SENTRY_DSN_HADOUTA_WEB from .env.local>
-  NEXT_PUBLIC_POSTHOG_KEY=<POSTHOG_PROJECT_API_KEY from .env.local>
-  NEXT_PUBLIC_POSTHOG_HOST=<POSTHOG_INGEST_HOST from .env.local>
-  ```
-  Until these are set, the SDKs in code are no-ops (DSN/key unset → init returns early). Real production data starts flowing only after Vercel env vars are populated and the next deploy redeploys with them baked in.
+- [x] **Set Railway `SENTRY_DSN`** ✅ done 2026-05-02. Backend `hadouta-backend` service env updated; redeploy triggered automatically.
 
-- [ ] **Frontend PostHog host bug** — the current `instrumentation-client.ts` defaults `api_host` to `https://us.i.posthog.com`, but Hadouta's PostHog account is EU (`https://eu.i.posthog.com`). Either set the env var on Vercel (overrides default) or update the SDK default. See [hadouta-web/instrumentation-client.ts](../../hadouta-web/instrumentation-client.ts).
+- [x] **Set Vercel env vars** ✅ done 2026-05-02 (previous session). `NEXT_PUBLIC_SENTRY_DSN`, `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` all set for production.
 
-- [ ] **Rename PostHog project** from "Default project" to "Hadouta" — at https://eu.posthog.com/settings/project. Cosmetic; not blocking.
+- [x] **Frontend PostHog EU-host default** ✅ done 2026-05-02. `PostHogProvider.tsx` now defaults to `https://eu.i.posthog.com` so missing env var no longer silently 401s.
+
+- [x] **Rename PostHog project** ✅ done 2026-05-02. Project 170756 renamed from "Default project" to "Hadouta" via PATCH /api/projects/170756/.
 
 - [ ] **Revisit MCP integration** when one of:
   - Claude Code resolves [#12077](https://github.com/anthropics/claude-code/issues/12077)
