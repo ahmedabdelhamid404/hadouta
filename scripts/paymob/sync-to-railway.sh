@@ -16,10 +16,8 @@ set -a
 . <(grep -E '^PAYMOB_' .env.local || true)
 set +a
 
-# Required: API_KEY (everything else can come later if specific payment
-# methods aren't approved yet)
-if [ -z "$PAYMOB_API_KEY" ]; then
-  echo "❌ PAYMOB_API_KEY not set in .env.local"
+if [ -z "$PAYMOB_SECRET_KEY" ]; then
+  echo "❌ PAYMOB_SECRET_KEY not set — required for Unified Checkout API."
   exit 1
 fi
 
@@ -44,13 +42,15 @@ push_var() {
   echo "   ✓ $key"
 }
 
+push_var PAYMOB_SECRET_KEY "$PAYMOB_SECRET_KEY"
+push_var PAYMOB_PUBLIC_KEY "$PAYMOB_PUBLIC_KEY"
 push_var PAYMOB_API_KEY "$PAYMOB_API_KEY"
 push_var PAYMOB_INTEGRATION_ID_CARD "$PAYMOB_INTEGRATION_ID_CARD"
 push_var PAYMOB_INTEGRATION_ID_VODAFONE_CASH "$PAYMOB_INTEGRATION_ID_VODAFONE_CASH"
 push_var PAYMOB_INTEGRATION_ID_INSTAPAY "$PAYMOB_INTEGRATION_ID_INSTAPAY"
 push_var PAYMOB_HMAC_SECRET "$PAYMOB_HMAC_SECRET"
 push_var PAYMOB_IFRAME_ID "$PAYMOB_IFRAME_ID"
-push_var PAYMOB_BASE_URL "${PAYMOB_BASE_URL:-https://accept.paymob.com/api}"
+push_var PAYMOB_BASE_URL "${PAYMOB_BASE_URL:-https://accept.paymob.com}"
 
 echo ""
 echo "✅ PAYMOB_* synced to Railway. Trigger redeploy with: railway up"
