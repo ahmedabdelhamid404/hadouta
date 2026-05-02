@@ -67,7 +67,9 @@ End-to-end AI generation cycle from paid order to customer-downloadable PDF: Pay
 
 > **🟡 Sprint 2 build complete, blocked on Better-Auth INVALID_ORIGIN for admin sign-in.**
 >
-> Mitigation pushed: `advanced.disableCSRFCheck: true` on Better-Auth backend. Couldn't fully verify in last session because Better-Auth rate-limited me from test storm. **First action next session:** retry sign-in at `hadouta-admin.vercel.app/login` with `ahmed41997@gmail.com` / `A7med@hadouta`. If it works → run end-to-end cycle. If not → switch admin to direct cross-origin calls per the Plan B documented in `docs/session-notes/2026-05-03-sprint-2-cycle-day-1.md`.
+> **READ FIRST:** `docs/session-notes/2026-05-03-RESUME-CHECKLIST.md` — concrete step-by-step (verify auth → run cycle), with all curl commands, fallback Plan B, env-var checks, debt list, and identity mapping.
+>
+> Mitigation pushed: `advanced.disableCSRFCheck: true` on Better-Auth backend. Couldn't fully verify in last session because Better-Auth rate-limited me from test storm. **First action next session:** retry sign-in at `hadouta-admin.vercel.app/login` with `ahmed41997@gmail.com` / `A7med@hadouta`. If it works → run end-to-end cycle. If not → switch admin to direct cross-origin calls per the Plan B documented in the resume checklist.
 >
 > **End-to-end cycle to run once sign-in works:**
 > 1. Open `hadouta-web.vercel.app` → wizard 1-7 → pay (Paymob test card)
