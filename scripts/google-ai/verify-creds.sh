@@ -27,12 +27,12 @@ fi
 echo "→ API key: ${GOOGLE_AI_API_KEY:0:8}…${GOOGLE_AI_API_KEY: -4}"
 echo ""
 
-# Test with gemini-2.0-flash (text model — cheap quick auth test).
+# Test with gemini-2.5-flash (text model — cheap quick auth test).
 # We'll separately verify image generation works once we wire it.
-echo "1️⃣  Probing Gemini API (gemini-2.0-flash, 1-token test)..."
+echo "1️⃣  Probing Gemini API (gemini-2.5-flash, 1-token test)..."
 http_code=$(curl -s -o /tmp/google-ai-verify-resp.json -w "%{http_code}" \
   --max-time 15 \
-  -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GOOGLE_AI_API_KEY}" \
+  -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GOOGLE_AI_API_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
     "contents": [{"parts":[{"text":"ping"}]}],
