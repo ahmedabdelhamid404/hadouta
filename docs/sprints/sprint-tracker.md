@@ -9,7 +9,7 @@
 **Project**: Hadouta (حدوتة) — Egyptian AI personalized children's book platform
 **Launch target**: September 1, 2026
 **Build window**: ~22 weeks from 2026-04-30
-**Current phase**: ✅ Bootstrap complete · ✅ Public repos live · ✅ Sprint 1 wizard end-to-end on prod · 🟡 **Sprint 2 — AI generation + admin review queue: BUILD COMPLETE, blocked on Better-Auth `INVALID_ORIGIN` for live sign-in (mitigation pushed, verification pending)**
+**Current phase**: ✅ Bootstrap complete · ✅ Public repos live · ✅ Sprint 1 wizard end-to-end on prod · ✅ **Sprint 2 SHIPPED** (AI gen + admin review + customer PDF download) · ✅ **Post-Sprint-2 polish SHIPPED** (PDF redesign + illustration pipeline rebuilt, Bible-driven, Nano Banana Pro Edit, multi-photo identity) · 🟢 **Ready to start Sprint 3 (validators + story-quality + Trigger.dev migration)**
 
 ### GitHub repos (all live as of session 9)
 - 📚 **Umbrella + docs** (public): https://github.com/ahmedabdelhamid404/hadouta
@@ -26,10 +26,17 @@
 
 ## Current sprint
 
-**Sprint**: 2 — AI generation pipeline + admin review queue
-**Sprint window**: Weeks 3–4 (started 2026-05-02 session 9)
-**Status**: 🟡 Build complete, end-to-end live cycle blocked on auth issue
-**Plan**: `docs/design/specs/2026-05-02-sprint-2-implementation-plan.md`
+**Sprint**: 3 — Validators framework + story-quality tuning + Trigger.dev migration
+**Sprint window**: Weeks 5–8 (starts 2026-05-06 next session)
+**Status**: 🟢 Ready to begin (Sprint 2 shipped + polished, ADRs 023/024/025 locked)
+**Plan**: `docs/sprints/sprint-03-ai-pipeline.md`
+
+## Previous sprint — Sprint 2 (CLOSED)
+
+**Window**: Weeks 3–4 (2026-05-02 session 9 → 2026-05-05 illustration pipeline polish)
+**Status**: ✅ SHIPPED to production (verified end-to-end with real customer photos)
+**Original plan**: `docs/design/specs/2026-05-02-sprint-2-implementation-plan.md`
+**Final architecture (post-pivot)**: `docs/decisions/ADR-024-bible-driven-illustration-pipeline.md`
 
 ### Sprint 2 goal (revised — wider than the doc-tree skeleton)
 
@@ -53,11 +60,13 @@ End-to-end AI generation cycle from paid order to customer-downloadable PDF: Pay
 - ✅ Puppeteer + Cairo Arabic font PDF assembly, uploaded to Cloudinary as raw
 - ✅ Customer `/account` (phone-keyed orders list) + `/account/orders/[id]` (status + PDF download with auto-poll)
 - ✅ Wizard step 7 → links to `/account/orders/[id]`
-- 🟡 Admin sign-in via deployed app — **BLOCKED, mitigation pushed, see Open Issues**
-- ⏸️ End-to-end live cycle (paid order → admin approve → customer downloads PDF) — pending sign-in fix
-- ⏸️ Validators framework v1 (cultural / age / religious-neutrality / theme-alignment) — deferred to Sprint 3
-- ⏸️ Trigger.dev v3 migration (durable retries) — deferred to Sprint 3 per ADR-010
-- ⏸️ WhatsApp delivery — explicitly skipped for Sprint 2 (Twilio + Meta template approval take 24-48h)
+- ✅ Admin sign-in via deployed app — UNBLOCKED (Railway deploy was stale; `railway up` resolved it on 2026-05-04)
+- ✅ End-to-end live cycle verified (paid order → AI generation → admin approve → customer downloads PDF)
+- ✅ **PDF redesign shipped** (2026-05-03) — see ADR-023 + spec
+- ✅ **Illustration pipeline rebuild shipped** (2026-05-04 → 2026-05-05) — Bible-driven, Nano Banana Pro Edit, multi-photo, gpt-4o, identity-preservation prompts. See ADR-024 + ADR-025.
+- ⏸️ Validators framework v1 (cultural / age / religious-neutrality / theme-alignment) — Sprint 3
+- ⏸️ Trigger.dev v3 migration (durable retries) — Sprint 3 per ADR-010
+- ⏸️ WhatsApp delivery — Sprint 4 (Meta template approval lead time)
 
 (Full plan: `docs/design/specs/2026-05-02-sprint-2-implementation-plan.md`)
 
@@ -65,29 +74,49 @@ End-to-end AI generation cycle from paid order to customer-downloadable PDF: Pay
 
 ## Resume here (next concrete action)
 
-> **🟡 Sprint 2 build complete, blocked on Better-Auth INVALID_ORIGIN for admin sign-in.**
+> **🟢 Sprint 2 fully shipped. Sprint 3 ready to start.**
 >
-> **READ FIRST:** `docs/session-notes/2026-05-03-RESUME-CHECKLIST.md` — concrete step-by-step (verify auth → run cycle), with all curl commands, fallback Plan B, env-var checks, debt list, and identity mapping.
+> **What's working in production right now (verified 2026-05-05):**
+> - Customer wizard end-to-end: 1-3 photos uploaded → paid order → auto AI generation → admin reviews in queue → approves → customer downloads watercolor 16-page Egyptian PDF.
+> - Bible-driven illustration pipeline: Nano Banana Pro Edit on Fal.ai, multi-photo identity reference, gpt-4o for both story + Bible + vision.
+> - Admin sign-in working from `hadouta-admin.vercel.app`.
+> - PDF redesign live: cover (poster register) + 16 body pages (framed-island register) + end-page with `moralStatement` and "النهاية" stamp; three-font hierarchy; paper grain texture; ✦ ornament family.
 >
-> Mitigation pushed: `advanced.disableCSRFCheck: true` on Better-Auth backend. Couldn't fully verify in last session because Better-Auth rate-limited me from test storm. **First action next session:** retry sign-in at `hadouta-admin.vercel.app/login` with `ahmed41997@gmail.com` / `A7med@hadouta`. If it works → run end-to-end cycle. If not → switch admin to direct cross-origin calls per the Plan B documented in the resume checklist.
+> **READ FIRST next session:** `docs/session-notes/2026-05-05-pdf-redesign-and-illustration-pipeline.md` — full Phase H journey log (8 iterations, why Flux+PuLID was rejected, why Nano Banana won). Plus ADR-024 + ADR-025 for the locked architecture.
 >
-> **End-to-end cycle to run once sign-in works:**
-> 1. Open `hadouta-web.vercel.app` → wizard 1-7 → pay (Paymob test card)
-> 2. Wait ~3-5 min for generation to complete
-> 3. Open `hadouta-admin.vercel.app` → live SSE toast pops the new awaiting-review item
-> 4. Click into order → review story + 17 illustrations → click ✓ Approve
-> 5. PDF assembles in ~10 s → status flips to `delivered` (SSE pushes the change)
-> 6. Open `hadouta-web.vercel.app/account/orders/[id]` → click "حمّل الكتاب (PDF)" → downloads from Cloudinary
+> **Sprint 3 entry points (in priority order):**
+> 1. **Validators framework v1** — Bible-as-structured-data unlocks deterministic checking. Cultural validator: scan illustrations for negative-example violations (kahk-as-chocolate-cookies, makarona-as-spaghetti). Character validator: compare per-illustration appearance against `bibleJson.characterBible.mainChild.appearance`. Age-band validator: vocab-difficulty heuristics on `storyJson.pages[].text`. Religious-neutrality validator: surface mosque/cross/moral-religious-mention overlaps. See ADR-012 + ADR-013.
+> 2. **Story-quality tuning** — Phase H showed gpt-4o-mini produces too many constraint violations on the storyOutputSchema. gpt-4o is now the default but is more expensive (~$0.04/story vs $0.005). Either accept the cost or invest in a fine-tune (Sprint 5+). Also: parent-question relocation (out of book → companion artifact) is still deferred per ADR-023.
+> 3. **Trigger.dev v3 migration** — current orchestration is in-process fire-and-forget with retries. Per ADR-010, durable retries are needed once concurrency demands grow. Migration recipe in ADR-022.
+> 4. **PostHog funnel events** — `generation_started`, `generation_failed`, `generation_awaiting_review`, `generation_approved`, `generation_rejected`, `generation_delivered`. Required for Sprint 5 closed-beta funnel analysis.
+> 5. **Sentry instrumentation** around generation pipeline stages (story / Bible / per-illustration / PDF) so we can see where retries land in production.
+> 6. **HMAC magic-link tokens for `/api/public/order-status/:orderId`** — currently phone-only identity is a Sprint 2 first-cycle shortcut. Sprint 3 hardening before paid traffic.
 
-### Critical pre-cycle checks for next session
+### Sprint 2 followups (now scoped into Sprint 3)
 
-1. **Verify AI keys on Railway:** `OPENAI_API_KEY`, `GOOGLE_AI_API_KEY` (story + illustrations). If missing, sync via `bash scripts/{openai,google-ai}/sync-to-railway.sh`.
-2. **Verify Puppeteer Chromium downloaded on Railway:** `pnpm.onlyBuiltDependencies: ["puppeteer"]` in package.json should make it run; if PDF assembly fails with "chromium not found" in `generations.error_log`, switch to `@sparticuz/chromium`.
-3. **Verify Better-Auth disableCSRFCheck landed on Railway:** test sign-in via Playwright or curl with `Origin: https://hadouta-admin.vercel.app`.
+- Reactivate Better-Auth CSRF + origin check; switch admin to direct cross-origin calls with `cookies.session.attributes.sameSite: 'none'`
+- HMAC magic-link tokens for `/api/public/order-status/:orderId`
+- `must_change_password` invite endpoint + force-change UX
+- Admin settings page that reads/writes `ai_settings` row (currently DB-edited only)
+- Validators framework v1 (cultural / age / religious-neutrality / theme-alignment)
+- Trigger.dev v3 migration when concurrency demands durability (per ADR-010)
+- Story prompt evaluation suite (a few hand-graded golden examples, regression-tested per prompt change)
+- Backend Sentry instrumentation around generation pipeline stages
+- PostHog events for funnel: `generation_started`, `generation_failed`, `generation_awaiting_review`, `generation_approved`, `generation_rejected`, `generation_delivered`
+- Next.js 16 `middleware` → `proxy` rename (deprecation warning in build)
+- Single-instance SSE pub/sub → Redis pub/sub when scaling beyond 1 backend instance
+- Parent-question relocation (out-of-book to companion card / email / account-page) per ADR-023
 
-### Shipped (post-Sprint 2 polish)
+### Deferred AI-quality investments (Sprint 4+)
 
-- ✅ **PDF redesign shipped** (2026-05-03) — cover/body/end-page system, three-font hierarchy (Aref Ruqaa / El Messiri / Cairo), paper texture, watercolor washes, ornament ✦ family. Story schema + prompt updated to produce `moralStatement`; rendered on the end-page above "النهاية" in Aref Ruqaa. `parentDiscussionQuestion` no longer rendered in the book (relocation TBD — future companion card / email / account-page section). End-to-end verified against existing dev generation `f7d4e9eb` (backfill + reassemble + visual inspection at `/tmp/pdf-verify`). Final PDF size 5.5 MB (within Cloudinary free-tier 10MB limit, achieved via Cloudinary URL transforms `c_limit,w_750,f_jpg,q_70`). See `docs/design/specs/2026-05-03-pdf-redesign-spec.md`, `docs/design/specs/2026-05-03-pdf-redesign-implementation-plan.md`, and ADR-023.
+- **Per-customer character LoRA training** — gold-standard identity preservation. 15–90 min training per customer breaks the real-time wizard. Sprint 5+ premium tier with async fulfillment. (ADR-024 deferred §)
+- **Watercolor style LoRA** — train on commissioned Egyptian illustrations. Replaces style-prompt-engineering with model-baked style. Sprint 4+. (ADR-024 deferred §)
+- **Egyptian-Arabic-voice text LoRA** via OpenAI fine-tuning. Shrinks story-system-prompt.ts from 600 → ~50 lines. Sprint 5+. (ADR-024 deferred §)
+
+### Shipped post-Sprint-2 (the bridge into Sprint 3)
+
+- ✅ **PDF redesign** (2026-05-03) — cover/body/end-page system, three-font hierarchy (Aref Ruqaa / El Messiri / Cairo), paper texture, watercolor washes, ornament ✦ family. Story schema + prompt updated to produce `moralStatement`; rendered on the end-page above "النهاية" in Aref Ruqaa. `parentDiscussionQuestion` retained on schema but no longer rendered. PDF size 5.5 MB (Cloudinary URL transforms `c_limit,w_750,f_jpg,q_70`). See ADR-023.
+- ✅ **Illustration pipeline rebuild** (2026-05-04 evening → 2026-05-05) — original Sprint 2 pipeline had four orthogonal failures: style drift, character drift, setting drift, cultural literalness. Plus customer photos were dead-letter. Brainstormed → spec'd Flux+PuLID → built 14 of 16 tasks → Phase H verification (8 real-API iterations, ~$3.10 spend) revealed PuLID has portrait-only ceiling that can't render character-in-scene. Pivoted to Nano Banana Pro Edit. Architecture locked: Bible (locked character/setting/style/cultural anchors) + multi-photo identity references + identity-preservation prompt language + cover-as-cover-only (NOT body reference). gpt-4o adopted as production model (gpt-4o-mini permanently rejected per feedback memory). See ADR-024 (architecture) + ADR-025 (Phase H pivot lessons).
 
 ### Sprint 2 followups (recorded so we don't lose track)
 
@@ -262,6 +291,8 @@ Bootstrap session deliverables — all complete:
 | ADR-021 | Admin app architecture: separate `hadouta-admin` Next.js repo deployed to Vercel; email/password auth; default neutral chrome; super-admin seeded; Server-Sent Events for live notifications (added 2026-05-03) |
 | ADR-022 | Sprint 2 AI pipeline architecture: multi-provider router (gpt-/claude-/gemini- prefix routing via Vercel AI SDK), `ai_settings` singleton row for admin-tunable cost knobs, in-process fire-and-forget orchestration (Trigger.dev migration deferred), Puppeteer for Arabic-shaping-aware PDF assembly (added 2026-05-03; extends ADR-006 + ADR-010 + ADR-020) |
 | ADR-023 | moralStatement as first-class story output: new top-level Zod field on storyOutputSchema, generated by AI per updated system prompt, rendered on PDF end-page above "النهاية"; parentDiscussionQuestion stays on schema but is no longer rendered inside the book — relocation to a separate artifact deferred (added 2026-05-03; extends ADR-022 + ADR-020) |
+| ADR-024 | Bible-driven illustration pipeline with Nano Banana Pro Edit: 5-step pipeline (Story → Bible → per-page prompts → 17 illustrations via fal-ai/nano-banana-pro/edit → PDF); multi-photo identity references on every illustration call; structured Bible (characterBible + settingBible + styleBible + culturalNotes) generated by gpt-4o; cultural-glossary.ts with Egyptian terms + negative examples is the moat; per-book cost ~$0.74; body pages do NOT receive cover as image reference (Phase H proved cover-as-ref produces duplicate scenes) (added 2026-05-05; extends ADR-006 + ADR-019 + ADR-022; supersedes Sprint 2 Gemini-direct illustration provider) |
+| ADR-025 | Phase H pivot — Flux+PuLID rejected: spec called for Flux 1.1 Pro + PuLID per industry-survey research; 8 real-API iterations during Phase H verification proved PuLID has a portrait-only ceiling unaffected by id_weight or start_step tuning (parameter ceiling vs capability ceiling distinction); pivoted to Nano Banana Pro Edit which natively supports multi-image conditioning. Lessons-learned ADR. Real-API verification PRECEDES architecture lock-in for any future model-selection spec (added 2026-05-05; drives ADR-024) |
 
 ---
 
@@ -271,8 +302,8 @@ Bootstrap session deliverables — all complete:
 |---|---|---|---|
 | **0** | 2026-04-30 | Bootstrap infra + ADRs + plans | ✅ Complete |
 | **1** | Weeks 1–2 | Foundation: skeletons + landing live + ad campaign | 🟢 ~99.99% (Track A engineering DONE — wizard works end-to-end on production with Cloudinary photo upload + Paymob payment + dev OTP bypass. Track B prereqs and credential upgrades remain.) |
-| **2** | Weeks 3–4 | **AI generation pipeline + admin review queue + customer account/PDF download** (compressed: original Sprint 2 "validation infra" + Sprint 3 "AI pipeline" + parts of Sprint 4/5) | 🟡 Build complete, blocked on Better-Auth INVALID_ORIGIN for live sign-in |
-| **3** | Weeks 5–8 | Validators framework v1 + Trigger.dev migration + story-quality tuning + watercolor fix | ⏸️ Next |
+| **2** | Weeks 3–4 | **AI generation pipeline + admin review queue + customer account/PDF download** (compressed: original Sprint 2 "validation infra" + Sprint 3 "AI pipeline" + parts of Sprint 4/5). Plus PDF redesign (ADR-023) + illustration pipeline rebuild (ADR-024 + ADR-025). | ✅ Shipped & verified |
+| **3** | Weeks 5–8 | Validators framework v1 + Trigger.dev migration + story-quality tuning + Sentry/PostHog instrumentation + parent-question relocation | 🟢 Ready to start |
 | **4** | Weeks 9–12 | Customer ordering polish + WhatsApp delivery + email fallback + magic-link tokens | ⏸️ Skeletoned |
 | **5** | Weeks 13–16 | Closed beta + validator calibration | ⏸️ Skeletoned |
 | **6** | Weeks 17–22 | Soft launch → public launch (Sept 1) | ⏸️ Skeletoned |
@@ -299,17 +330,23 @@ None currently. Next session can begin executing Sprint 1 immediately.
 
 ---
 
-**Last updated**: 2026-05-03 (session 9) by Claude. **Sprint 2 build COMPLETE; live cycle blocked on Better-Auth `INVALID_ORIGIN` for admin sign-in.**
+**Last updated**: 2026-05-05 by Claude. **Sprint 2 SHIPPED AND CLOSED. PDF redesign + illustration pipeline rebuild SHIPPED (ADRs 023/024/025).**
+
+### 2026-05-05 update — illustration pipeline rebuild closed
+
+End-to-end customer test on 2026-05-04 surfaced four orthogonal failure modes in Sprint 2's illustration pipeline (style drift, character drift, setting drift, cultural literalness like "kahk → chocolate cookies") plus uploaded photos were dead-letter data. Brainstormed → spec'd → built 14 of 16 tasks across 8 phases (83/83 tests pass). **Phase H verification (8 real-API iterations, ~$3.10 spend across 2026-05-04 evening through 2026-05-05 morning) revealed the spec'd Flux+PuLID architecture has a portrait-only ceiling that fundamentally cannot render character-in-scene illustrations regardless of parameter tuning.** Pivoted to Nano Banana Pro Edit (`fal-ai/nano-banana-pro/edit`) — Gemini 2.5 Flash Image with native multi-image conditioning support. Final architecture (Iteration 8): multi-photo identity references on every call, gpt-4o for story + Bible + vision (gpt-4o-mini permanently rejected per feedback memory), strengthened Bible system prompt (explicit four-top-level-keys structure + hair-styling capture + outfit-continuity rules), identity-preservation prompt language on body pages. Iteration 8 generation `fad8f418-...` verified in admin queue.
+
+**Resume here next session:** Sprint 3 — validators framework v1, story-quality tuning, Trigger.dev migration. See "Resume here" section above for priority order.
+
+### 2026-05-03 update — Sprint 2 cycle
 
 Session 9 built the entire AI generation + admin review + customer download cycle in one long session:
-- AI pipeline (story + illustrations) with multi-provider routing, schema invariants, cost tracking — all working (verified `pnpm ai:test-story` against real paid order: 26 s story, 8.6 s single image, ~$0.0017 + $0.02 = ~$0.022 per pass)
-- `hadouta-admin` separate Next.js repo created + deployed to Vercel — login page, orders queue, order detail with story/images/approve/reject, live SSE notifications
-- Customer `/account` + `/account/orders/[id]` pages on hadouta-web — phone-keyed list + auto-polling status + PDF download
-- Wizard step 7 → links to account page
-- Schema migration 0005 (must_change_password) applied to Neon
-- Super-admin seeded (`ahmed41997@gmail.com` / `A7med@hadouta`)
-- Puppeteer-based Arabic-shaping-aware PDF assembly — uploads to Cloudinary as `raw` resource
+- AI pipeline (story + illustrations) with multi-provider routing, schema invariants, cost tracking
+- `hadouta-admin` separate Next.js repo created + deployed to Vercel
+- Customer `/account` + `/account/orders/[id]` pages on hadouta-web
+- Schema migrations 0004 + 0005 applied to Neon
+- Super-admin seeded
+- Puppeteer-based Arabic-shaping-aware PDF assembly
+- Better-Auth `INVALID_ORIGIN` blocker — resolved 2026-05-04 by `railway up` (deploy was stale, the fix was already in main)
 
-**The one open thread:** Better-Auth rejects sign-ins from `hadouta-admin.vercel.app` with INVALID_ORIGIN due to undici-fetch's auto-appended `Sec-Fetch-Mode: cors` interacting with Better-Auth's `validateFormCsrf`. Mitigation pushed (`advanced.disableCSRFCheck: true`); verification was rate-limited at session end. **Next session resumes by retesting; if mitigation didn't take, Plan B (drop proxy, use direct cross-origin calls + SameSite=None cookies) is documented in `docs/session-notes/2026-05-03-sprint-2-cycle-day-1.md`.**
-
-ADR-021 (admin app architecture) + ADR-022 (Sprint 2 AI pipeline architecture) added to docs/decisions/.
+ADR-021 (admin app architecture) + ADR-022 (Sprint 2 AI pipeline architecture) + ADR-023 (moralStatement) + ADR-024 (Bible-driven Nano Banana pipeline) + ADR-025 (Phase H pivot) all locked in `docs/decisions/`.
