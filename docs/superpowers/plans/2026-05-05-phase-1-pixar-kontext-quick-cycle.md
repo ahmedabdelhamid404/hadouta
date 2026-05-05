@@ -12,6 +12,22 @@
 
 ---
 
+## License preflight (verified 2026-05-05)
+
+**Decision:** LH Pixar 3D Style (Civitai 928840, trained on Flux.1 [dev]) is permitted for Phase 1 use under the explicit research/evaluation carve-out in BFL's Flux.1 [dev] License Section 1(c)(ii):
+
+> "(ii) use by commercial or for-profit entities for testing, evaluation, or non-commercial research and development in a non-production environment"
+
+Boundary conditions that MUST hold for the carve-out to apply:
+
+1. **Phase 1 outputs are NOT delivered to end users.** The 3 test images from Task 5 stay as internal evaluation artifacts (Cloudinary URLs known only to founder + admin). They are NOT served to حنين's family or any other customer. The original Nano Banana watercolor output for that order was already delivered to customer; Phase 1 outputs are post-hoc internal A/B comparison only.
+2. **No revenue-generating activity uses Phase 1 outputs.** No re-listing in catalog, no marketing material, no sample books for sales pitches.
+3. **If Phase 1 verdict is "ship Path D to production,"** we re-license BEFORE ship. Either: pay BFL for commercial license (`licensing@blackforestlabs.ai`), switch base to Flux.1 [schnell] (Apache-2.0), or commission a custom LoRA on commercially-licensed weights. ADR-026 records this commitment explicitly.
+
+License source: https://huggingface.co/black-forest-labs/FLUX.1-dev/blob/main/LICENSE.md
+
+---
+
 ## File Structure
 
 | File | Status | Responsibility |
@@ -155,12 +171,16 @@ EOF
 - Modify: `hadouta-backend/.env.example`
 - Modify: `hadouta-backend/.env`
 
-- [ ] **Step 1: Open Civitai page and read the model's license**
+- [ ] **Step 1: Confirm Phase 1 use is within BFL's research carve-out**
 
-Visit https://civitai.com/models/928840/lh-pixar-3d-style — scroll to "License" section. Look for one of:
-- "CreativeML OpenRAIL-M" — commercial use generally allowed
-- "Allow commercial use" toggle ON — proceed
-- "No commercial use" or "Personal use only" — STOP, pick a different LoRA from spec §4.4 candidate list and re-run this step
+License preflight at top of this plan already established that LH Pixar 3D Style (Civitai 928840) is permissible under BFL Flux.1 [dev] License §1(c)(ii) for testing/evaluation in non-production. This step is a final pre-flight confirmation:
+
+- Read the License preflight section at the top of this plan
+- Confirm the three boundary conditions hold for Phase 1:
+  - Phase 1 test outputs will NOT be delivered to حنين or any customer
+  - No revenue-generating activity will use Phase 1 outputs
+  - If Phase 1 verdict is "ship Path D," we re-license BEFORE shipping (pay BFL, switch to Flux.1 [schnell] base, or commission custom LoRA)
+- If any boundary condition is at risk: STOP and consult founder before proceeding
 
 - [ ] **Step 2: If license OK, download the LoRA `.safetensors` file**
 
@@ -1237,7 +1257,16 @@ Phase 1 quick-cycle ran per `docs/superpowers/specs/2026-05-05-phase-1-pixar-kon
 Confirmed adopted regardless of Phase 1 verdict, per session 2026-05-05 brainstorm:
 - ADR-005 watercolor anchor superseded.
 - Brand brief watercolor → Pixar update scheduled in next session.
-- Sprint 4+ replaces off-the-shelf Civitai LoRA with custom Hadouta-Egyptian-Pixar LoRA commissioned from Egyptian illustrators.
+- Sprint 4+ replaces off-the-shelf Civitai LoRA with custom Hadouta-Egyptian-Pixar LoRA commissioned from Egyptian illustrators on commercially-licensed weights (Flux.1 [schnell] Apache-2.0 base).
+
+## Licensing posture for Phase 1 (research carve-out)
+
+Phase 1 used LH Pixar 3D Style (Civitai 928840, trained on Flux.1 [dev]) under BFL Flux.1 [dev] License Section 1(c)(ii): "use by commercial or for-profit entities for testing, evaluation, or non-commercial research and development in a non-production environment." The 3 test outputs of generation `fad8f418-...` are internal evaluation artifacts and were NOT delivered to end users. حنين's family received the original Nano Banana watercolor output as the production artifact for that order; the Phase 1 outputs exist only as Cloudinary URLs known to founder + admin reviewer.
+
+**If the verdict above is "Ship Path D" or "Ship Path D as interim," commercial re-licensing is required before any production deployment touches end users.** Options to be evaluated then:
+- Pay BFL for a commercial Flux.1 [dev] license (`licensing@blackforestlabs.ai`)
+- Switch to Flux.1 [schnell] base (Apache-2.0, fully commercial) — research a [schnell]-trained Pixar LoRA
+- Sprint 4+ custom commission as planned (preferred long-term)
 
 ## Consequences
 
