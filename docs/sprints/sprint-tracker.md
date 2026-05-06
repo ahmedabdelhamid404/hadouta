@@ -9,7 +9,7 @@
 **Project**: Hadouta (حدوتة) — Egyptian AI personalized children's book platform
 **Launch target**: September 1, 2026
 **Build window**: ~22 weeks from 2026-04-30
-**Current phase**: ✅ Bootstrap complete · ✅ Public repos live · ✅ Sprint 1 wizard end-to-end on prod · ✅ **Sprint 2 SHIPPED** (AI gen + admin review + customer PDF download) · ✅ **Post-Sprint-2 polish SHIPPED** (PDF redesign + illustration pipeline rebuilt, Bible-driven, Nano Banana Pro Edit, multi-photo identity) · 🟢 **Ready to start Sprint 3 (validators + story-quality + Trigger.dev migration)**
+**Current phase**: ✅ Bootstrap complete · ✅ Public repos live · ✅ Sprint 1 wizard end-to-end on prod · ✅ **Sprint 2 SHIPPED** (AI gen + admin review + customer PDF download) · ✅ **Post-Sprint-2 polish SHIPPED** (PDF redesign + illustration pipeline rebuilt, Bible-driven, Nano Banana Pro Edit, multi-photo identity) · ✅ **Phase 1 character-fidelity verdict SHIPPED** (2026-05-06: Nano Banana 2 + Pixar-3D prompt overlay locked as the architecture; ADRs 026/027) · 🟢 **Ready to start Sprint 3 — refreshed entry points (Bible-gen rewrite + buildIllustrationPrompt rewrite take top priority over original validators-first plan)**
 
 ### GitHub repos (all live as of session 9)
 - 📚 **Umbrella + docs** (public): https://github.com/ahmedabdelhamid404/hadouta
@@ -74,23 +74,41 @@ End-to-end AI generation cycle from paid order to customer-downloadable PDF: Pay
 
 ## Resume here (next concrete action)
 
-> **🟢 Sprint 2 fully shipped. Sprint 3 ready to start.**
+> **🟢 Phase 1 character-fidelity verdict SHIPPED 2026-05-06. Sprint 3 refreshed and ready to start.**
 >
-> **What's working in production right now (verified 2026-05-05):**
-> - Customer wizard end-to-end: 1-3 photos uploaded → paid order → auto AI generation → admin reviews in queue → approves → customer downloads watercolor 16-page Egyptian PDF.
-> - Bible-driven illustration pipeline: Nano Banana Pro Edit on Fal.ai, multi-photo identity reference, gpt-4o for both story + Bible + vision.
+> **What's working in production right now (verified through 2026-05-06):**
+> - Customer wizard end-to-end: 1-3 photos uploaded → paid order → auto AI generation → admin reviews in queue → approves → customer downloads PDF.
+> - Illustration model upgraded: production endpoint is now `fal-ai/nano-banana-2/edit` (Gemini 3.1 Flash Image, $0.08/edit, ~half the prior cost). Drop-in swap; same multi-image-edit shape; better adult-character rendering + better instruction following.
 > - Admin sign-in working from `hadouta-admin.vercel.app`.
-> - PDF redesign live: cover (poster register) + 16 body pages (framed-island register) + end-page with `moralStatement` and "النهاية" stamp; three-font hierarchy; paper grain texture; ✦ ornament family.
+> - PDF redesign live (cover + 16 body + end-page system per ADR-023).
 >
-> **READ FIRST next session:** `docs/session-notes/2026-05-05-pdf-redesign-and-illustration-pipeline.md` — full Phase H journey log (8 iterations, why Flux+PuLID was rejected, why Nano Banana won). Plus ADR-024 + ADR-025 for the locked architecture.
+> **READ FIRST next session — in this exact order:**
+> 1. `docs/session-notes/2026-05-06-phase-1-character-fidelity-verdict.md` — full Phase 1 journey log (6 iterations, why Flux Kontext + Pixar LoRA was abandoned, why Nano Banana 2 won, all bugs documented).
+> 2. `docs/decisions/ADR-026-phase-1-pixar-character-fidelity-verdict.md` — verdict architecture + production gaps that Sprint 3 must close.
+> 3. `docs/decisions/ADR-027-watercolor-to-pixar-3d-brand-pivot.md` — brand-side implications of the verdict.
 >
-> **Sprint 3 entry points (in priority order):**
-> 1. **Validators framework v1** — Bible-as-structured-data unlocks deterministic checking. Cultural validator: scan illustrations for negative-example violations (kahk-as-chocolate-cookies, makarona-as-spaghetti). Character validator: compare per-illustration appearance against `bibleJson.characterBible.mainChild.appearance`. Age-band validator: vocab-difficulty heuristics on `storyJson.pages[].text`. Religious-neutrality validator: surface mosque/cross/moral-religious-mention overlaps. See ADR-012 + ADR-013.
-> 2. **Story-quality tuning** — Phase H showed gpt-4o-mini produces too many constraint violations on the storyOutputSchema. gpt-4o is now the default but is more expensive (~$0.04/story vs $0.005). Either accept the cost or invest in a fine-tune (Sprint 5+). Also: parent-question relocation (out of book → companion artifact) is still deferred per ADR-023.
-> 3. **Trigger.dev v3 migration** — current orchestration is in-process fire-and-forget with retries. Per ADR-010, durable retries are needed once concurrency demands grow. Migration recipe in ADR-022.
-> 4. **PostHog funnel events** — `generation_started`, `generation_failed`, `generation_awaiting_review`, `generation_approved`, `generation_rejected`, `generation_delivered`. Required for Sprint 5 closed-beta funnel analysis.
-> 5. **Sentry instrumentation** around generation pipeline stages (story / Bible / per-illustration / PDF) so we can see where retries land in production.
-> 6. **HMAC magic-link tokens for `/api/public/order-status/:orderId`** — currently phone-only identity is a Sprint 2 first-cycle shortcut. Sprint 3 hardening before paid traffic.
+> **What changed in production code this session:**
+> - `fal-ai/nano-banana-pro/edit` → `fal-ai/nano-banana-2/edit` (constants renamed, modelId fields updated). Commit `278f0a3`.
+> - `appendPixarStyleAnchor()` helper added with Pixar-3D trigger + anti-watercolor + NO-TEXT-IN-IMAGE clauses.
+> - `flux-kontext-pixar` provider exists as alternate (not default; Sprint 3 cleanup target).
+>
+> **What's NOT yet in production but is in iteration scripts (Sprint 3 must port):**
+> - Bible-gen prompt rewrites (Pixar-friendly styleBible + populated supportingCharacters + story-aligned outfits)
+> - `buildIllustrationPrompt` rewrites (per-page pose, environmental props, character-presence injection, identity disambiguation, 60/40 composition)
+>
+> **The verdict generation is in admin queue:** https://hadouta-admin.vercel.app/orders/fe8fe560-c009-4cd4-8533-83fca7b0a5e8 — this is iteration-6 quality, what production should match after Sprint 3's prompt-builder work.
+>
+> **Sprint 3 entry points — REFRESHED priority order:**
+> 1. **Bible-gen prompt rewrite** ← biggest gap, top priority. Currently produces watercolor-era styleBible (`"soft watercolor on cream paper"` + `"NOT 3D-rendered"`) and empty `supportingCharacters` array (a long-standing bug). Rewrite to default Pixar-friendly fields, populate supportingCharacters from named characters in the story, produce story-aligned outfit defaults. Without this, production output stays at iteration-1 quality.
+> 2. **`buildIllustrationPrompt` rewrite** to port iter-6's inline-prompt structure into the production prompt-builder (per-page POSE & EMOTION direction, SETTING & ENVIRONMENTAL DETAILS props, character-presence injection, identity-disambiguation language, 60/40 hero/setting composition, anti-conflicting-style negatives).
+> 3. **Brand brief + customer copy update** per ADR-027 — `docs/brand/brand-brief.md` watercolor language replaced; landing page hero, wizard copy, order-confirmation email, WhatsApp template all updated.
+> 4. **End-to-end full-book test** under verdict architecture — Phase 1 only tested 4 pages × 1 child. Run a full 17-page generation on a different test order (different age, different theme, different skin tone) for cross-demographic validation.
+> 5. **Cleanup**: remove `flux-kontext-pixar` provider code path + `callFluxKontextPixar()` helper + `PIXAR_STYLE_LORA_URL` env var + iteration scripts + `verify-fal-kontext-lora.ts`. Remove `appendPixarStyleAnchor` once Bible-gen produces Pixar-friendly styleBible by default.
+> 6. **Validators framework v1** — character validator becomes redundant under verdict architecture (face fidelity is structurally bounded by Nano Banana 2 + multi-photo identity); cultural / age-band / religious-neutrality validators still in scope per ADR-012 + ADR-013.
+> 7. **PostHog funnel events** + Sentry instrumentation around generation pipeline stages.
+> 8. **Trigger.dev v3 migration** when concurrency demands durability (per ADR-010, recipe in ADR-022).
+> 9. **HMAC magic-link tokens** for `/api/public/order-status/:orderId` (Sprint 2 followup, hardening).
+> 10. **Story-quality tuning** — defer until items 1–2 ship; iter-6 showed story is already strong; the gap is illustration-side.
 
 ### Sprint 2 followups (now scoped into Sprint 3)
 
@@ -117,6 +135,7 @@ End-to-end AI generation cycle from paid order to customer-downloadable PDF: Pay
 
 - ✅ **PDF redesign** (2026-05-03) — cover/body/end-page system, three-font hierarchy (Aref Ruqaa / El Messiri / Cairo), paper texture, watercolor washes, ornament ✦ family. Story schema + prompt updated to produce `moralStatement`; rendered on the end-page above "النهاية" in Aref Ruqaa. `parentDiscussionQuestion` retained on schema but no longer rendered. PDF size 5.5 MB (Cloudinary URL transforms `c_limit,w_750,f_jpg,q_70`). See ADR-023.
 - ✅ **Illustration pipeline rebuild** (2026-05-04 evening → 2026-05-05) — original Sprint 2 pipeline had four orthogonal failures: style drift, character drift, setting drift, cultural literalness. Plus customer photos were dead-letter. Brainstormed → spec'd Flux+PuLID → built 14 of 16 tasks → Phase H verification (8 real-API iterations, ~$3.10 spend) revealed PuLID has portrait-only ceiling that can't render character-in-scene. Pivoted to Nano Banana Pro Edit. Architecture locked: Bible (locked character/setting/style/cultural anchors) + multi-photo identity references + identity-preservation prompt language + cover-as-cover-only (NOT body reference). gpt-4o adopted as production model (gpt-4o-mini permanently rejected per feedback memory). See ADR-024 (architecture) + ADR-025 (Phase H pivot lessons).
+- ✅ **Phase 1 character-fidelity verdict** (2026-05-06) — 6-iteration verification sprint to answer the founder's "wtf it's him" face-fidelity goal. Tried Flux Kontext Pro + Civitai Pixar LoRA across iterations 2–4 (got to ~98% wtf face but supporting-character age + narrative-action + accessory-state issues persisted). Iteration 5 (gpt-image-2) blocked at OpenAI org-verification gate. **Iteration 6 (`fal-ai/nano-banana-2/edit` with iter-4 Pixar prompts) won decisively** — adult-character differentiation, active narrative moments, dramatic atmospherics, cross-page consistency, bilingual text-in-image capability, all at half the per-page cost. Total Phase 1 spend ~$2.50. Production endpoint upgraded (commit `278f0a3`). Brand pivoted from watercolor to Pixar-3D. Architecture locked: Nano Banana 2 + multi-image identity reference (1–3 customer photos) + Pixar-3D prompt overlay (no LoRA needed). See ADR-026 (verdict) + ADR-027 (brand pivot) + session note `2026-05-06-phase-1-character-fidelity-verdict.md`.
 
 ### Sprint 2 followups (recorded so we don't lose track)
 
@@ -293,6 +312,8 @@ Bootstrap session deliverables — all complete:
 | ADR-023 | moralStatement as first-class story output: new top-level Zod field on storyOutputSchema, generated by AI per updated system prompt, rendered on PDF end-page above "النهاية"; parentDiscussionQuestion stays on schema but is no longer rendered inside the book — relocation to a separate artifact deferred (added 2026-05-03; extends ADR-022 + ADR-020) |
 | ADR-024 | Bible-driven illustration pipeline with Nano Banana Pro Edit: 5-step pipeline (Story → Bible → per-page prompts → 17 illustrations via fal-ai/nano-banana-pro/edit → PDF); multi-photo identity references on every illustration call; structured Bible (characterBible + settingBible + styleBible + culturalNotes) generated by gpt-4o; cultural-glossary.ts with Egyptian terms + negative examples is the moat; per-book cost ~$0.74; body pages do NOT receive cover as image reference (Phase H proved cover-as-ref produces duplicate scenes) (added 2026-05-05; extends ADR-006 + ADR-019 + ADR-022; supersedes Sprint 2 Gemini-direct illustration provider) |
 | ADR-025 | Phase H pivot — Flux+PuLID rejected: spec called for Flux 1.1 Pro + PuLID per industry-survey research; 8 real-API iterations during Phase H verification proved PuLID has a portrait-only ceiling unaffected by id_weight or start_step tuning (parameter ceiling vs capability ceiling distinction); pivoted to Nano Banana Pro Edit which natively supports multi-image conditioning. Lessons-learned ADR. Real-API verification PRECEDES architecture lock-in for any future model-selection spec (added 2026-05-05; drives ADR-024) |
+| ADR-026 | Phase 1 character-fidelity verdict — Nano Banana 2 (Gemini 3.1 Flash Image, fal-ai/nano-banana-2/edit, $0.08/edit) + multi-image identity reference (1–3 customer photos) + Pixar-3D prompt overlay (no LoRA needed) is the locked illustration architecture. 6-iteration verification sprint produced ~$2.50 spend; iter 6 dramatically beat iter-4's Flux Kontext + Pixar LoRA on adult-character age differentiation, narrative-action depiction, accessory-state stability, and per-page cost. Production endpoint upgraded (commit 278f0a3). Production prompt-builder gaps (Bible-gen styleBible + supportingCharacters; buildIllustrationPrompt structure) recorded as Sprint 3 top-priority work (added 2026-05-06; extends ADR-024) |
+| ADR-027 | Watercolor → Pixar-3D brand pivot: ADR-005's watercolor anchor is dropped (the L3 photo-upload portion stands). Pixar-3D animated register (Disney Encanto / Coco / Inside Out) is the locked illustration style. Egyptian cultural specificity moves to content layer (story voice, kahk/fanous/makarona-bashamel cultural anchors, settings) — register is now an open product variable. Brand brief + customer copy edits required as Sprint 3 followup (added 2026-05-06; supersedes ADR-005 style portion; companion to ADR-026) |
 
 ---
 
@@ -303,7 +324,7 @@ Bootstrap session deliverables — all complete:
 | **0** | 2026-04-30 | Bootstrap infra + ADRs + plans | ✅ Complete |
 | **1** | Weeks 1–2 | Foundation: skeletons + landing live + ad campaign | 🟢 ~99.99% (Track A engineering DONE — wizard works end-to-end on production with Cloudinary photo upload + Paymob payment + dev OTP bypass. Track B prereqs and credential upgrades remain.) |
 | **2** | Weeks 3–4 | **AI generation pipeline + admin review queue + customer account/PDF download** (compressed: original Sprint 2 "validation infra" + Sprint 3 "AI pipeline" + parts of Sprint 4/5). Plus PDF redesign (ADR-023) + illustration pipeline rebuild (ADR-024 + ADR-025). | ✅ Shipped & verified |
-| **3** | Weeks 5–8 | Validators framework v1 + Trigger.dev migration + story-quality tuning + Sentry/PostHog instrumentation + parent-question relocation | 🟢 Ready to start |
+| **3** | Weeks 5–8 | **Bible-gen prompt rewrite (Pixar-friendly + supporting-chars populated) + buildIllustrationPrompt rewrite (per-page pose/props/character-presence) + brand brief update per ADR-027** + validators framework v1 + Trigger.dev migration + Sentry/PostHog instrumentation + cleanup of Phase 1 alt code paths (flux-kontext-pixar provider + LoRA env + verify-fal-kontext-lora.ts) | 🟢 Ready to start (refreshed entry points 2026-05-06) |
 | **4** | Weeks 9–12 | Customer ordering polish + WhatsApp delivery + email fallback + magic-link tokens | ⏸️ Skeletoned |
 | **5** | Weeks 13–16 | Closed beta + validator calibration | ⏸️ Skeletoned |
 | **6** | Weeks 17–22 | Soft launch → public launch (Sept 1) | ⏸️ Skeletoned |
@@ -330,7 +351,25 @@ None currently. Next session can begin executing Sprint 1 immediately.
 
 ---
 
-**Last updated**: 2026-05-05 by Claude. **Sprint 2 SHIPPED AND CLOSED. PDF redesign + illustration pipeline rebuild SHIPPED (ADRs 023/024/025).**
+**Last updated**: 2026-05-06 by Claude. **Phase 1 character-fidelity verdict SHIPPED AND CLOSED (ADRs 026/027). Production on Nano Banana 2 + Pixar-3D brand register.**
+
+### 2026-05-06 update — Phase 1 character-fidelity verdict closed
+
+Phase 1 (separate from Sprint numbering) was a focused 1-day verification sprint to answer the founder's "wtf it's him" face-fidelity goal — the gem-of-the-product question Hadouta launches on. Six iterations against real APIs (~$2.50 total spend) on حنين's First Day at School order produced an unambiguous architectural verdict.
+
+**Tested + rejected:** Flux 1 Kontext Pro + Civitai Pixar-3D LoRA + multi-image identity reference (the "Path D" architecture from the design spec). Got to ~98% wtf face on iteration 1 but plateaued on iterations 2–4: supporting characters (mother/teacher) kept rendering as teenage versions of Hanine despite explicit age cues + Pixar movie references; narrative-action moments (active ribbon-tying) refused to depict; accessory state drifted (ribbon vs headband across pages). Pixar-trained-flow models bias toward youthful-cute regardless of prompt strength.
+
+**Tested + blocked:** OpenAI gpt-image-2 (April 2026 release with native reasoning). HTTP 403 — organization verification required. Founder verified but propagation didn't complete during session. Script committed (`run-phase-1-iteration-5-gpt-image-2.ts`) for retry but unlikely to displace verdict (cost 5–10× more).
+
+**Tested + adopted:** Iteration 6 — `fal-ai/nano-banana-2/edit` (Gemini 3.1 Flash Image, Feb 2026 release, $0.08/edit, half the prior Nano Banana Pro cost) + same iter-4 Pixar prompts. Nano Banana 2's reasoning planner disambiguated subject-of-photo from other-characters-in-scene, rendering the mother as a clearly adult woman, the active ribbon-tying moment, the teacher as mature authority figure, two named distinct classmates — all the bugs that resisted Flux Kontext for 3 iterations. Bonus: legible English + Arabic typography baked into images (text-in-image is a Nano Banana 2 first-class capability; cover got "HANINE'S FIRST DAY" baked in, classroom got the Arabic alphabet poster on the wall).
+
+**Production code shipped:** `fal-ai/nano-banana-pro/edit` → `fal-ai/nano-banana-2/edit` constant swap (commit `278f0a3`); `appendPixarStyleAnchor()` helper added to `build-illustration-prompt.ts` with NO-TEXT-IN-IMAGE clause (suppresses the cover-typography emergent behavior). Production endpoint upgraded; production prompt-builder still uses watercolor-era Bible defaults — Sprint 3 must rewrite Bible-gen + buildIllustrationPrompt to land iter-6 quality on real customer orders.
+
+**Brand pivot:** ADR-005's watercolor anchor dropped per ADR-027. Pixar-3D animated register locked. Brand brief + customer copy updates queued for Sprint 3.
+
+**Verdict generation in admin:** https://hadouta-admin.vercel.app/orders/fe8fe560-c009-4cd4-8533-83fca7b0a5e8
+
+**Resume here next session:** Sprint 3 with REFRESHED entry points — Bible-gen prompt rewrite + buildIllustrationPrompt rewrite take top priority over original validators-first plan. See "Resume here" section above + ADR-026 + ADR-027 + session note `2026-05-06-phase-1-character-fidelity-verdict.md`.
 
 ### 2026-05-05 update — illustration pipeline rebuild closed
 
