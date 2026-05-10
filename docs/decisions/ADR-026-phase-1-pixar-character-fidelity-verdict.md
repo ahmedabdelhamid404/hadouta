@@ -1,10 +1,12 @@
 # ADR-026: Phase 1 verdict — Nano Banana 2 + Pixar 3D + multi-photo identity wins
 
+> **2026-05-10 update**: the BRAND-REGISTER portion of this ADR (Pixar-3D as Hadouta's locked illustration style) was reverted by **ADR-028** after iter 7 face-fidelity testing showed Pixar models bias toward youthful-cute on adult characters. The brand is now watercolor again per ADR-005. **However, the MODEL + ARCHITECTURE portion of this ADR (Nano Banana 2 + multi-image identity reference + Bible-driven prompt construction) STILL STANDS** — the iter 7 marathon validated that architecture in production-scale use; only the style register changed.
+
 **Date:** 2026-05-06
-**Status:** Accepted (Phase 1 closed)
+**Status:** Accepted (model + architecture portion); brand portion SUPERSEDED by ADR-028 (2026-05-10)
 **Supersedes:** none
 **Extends:** ADR-024 (Bible-driven illustration pipeline)
-**Companion:** ADR-027 (watercolor → Pixar-3D brand pivot)
+**Companion:** ADR-027 (watercolor → Pixar-3D brand pivot — itself superseded by ADR-028)
 **Type:** Outcome ADR — locks the architecture verified across 6 iterations
 
 ---
