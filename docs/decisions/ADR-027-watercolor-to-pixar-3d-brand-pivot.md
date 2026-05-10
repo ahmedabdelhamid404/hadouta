@@ -1,8 +1,11 @@
 # ADR-027: Watercolor → Pixar-3D brand pivot
 
+> ⚠️ **SUPERSEDED on 2026-05-10 by ADR-028** (`ADR-028-watercolor-revert-from-pixar-3d.md`). The Pixar-3D brand pivot decided here was reversed after iter 7 face-fidelity testing showed Pixar models bias toward youthful-cute on adult characters and amplify face-geometry rigidity that Nano Banana 2 already struggles with. ADR-005's watercolor register is restored. ADR-026's illustration model lock (Nano Banana 2 + multi-image identity) stands.
+
 **Date:** 2026-05-06
-**Status:** Accepted
+**Status:** ⚠️ SUPERSEDED (was Accepted)
 **Supersedes:** ADR-005's "Watercolor/storybook style" decision (the L3 photo-upload decision in ADR-005 stands)
+**Superseded by:** ADR-028 (2026-05-10)
 **Companion:** ADR-026 (Phase 1 character-fidelity verdict)
 **Type:** Brand decision
 

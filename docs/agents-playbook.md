@@ -33,6 +33,7 @@ The bar is high: only when **both** of the following are true:
 - AI pipeline architecture (Sprint 3) — multiple coupled providers + Trigger.dev workflows + cost discipline
 - Threat-modeling photo-upload + payment flows (Sprint 4)
 - Active-learning loop design with pgvector embeddings (Sprint 3+)
+- **AI prompt-engineering for image-generation models** (added 2026-05-10) — per founder direction during iter 7 face-fidelity marathon, AI Engineer dispatch is now MANDATORY for any prompt-structure work on Nano Banana 2 / Gemini image / story-gen prompts / vision prompts. Three successful dispatches in that session (LoRA-vs-identity-adapter research, Nano Banana + LoRA empirical investigation, expression-override prompt restructure) consistently produced better-grounded recommendations than Claude solo. **Pattern: dispatch for research + paste-ready markdown recommendations; Claude does code integration. Do NOT dispatch for code execution — agents get sandboxed without Bash/Write in some contexts.**
 
 ### Examples that do NOT clear the bar (Claude does these directly)
 - Standard auth integration (Better-Auth) — proven in Sprint 1

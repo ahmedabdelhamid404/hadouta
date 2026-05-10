@@ -1,7 +1,50 @@
 # Sprint 3 — AI Pipeline Foundation
 
 **Window**: Weeks 5–8 of build
-**Status**: ⏸️ Skeletoned (full detail when sprint starts)
+**Status**: 🟡 IN FLIGHT — Sprint 3 #1+#2 + audit committed (commits `919b846` / `5ef4690` / `d5de204`, local only). Iter 7 face-fidelity marathon SHIPPED reference book to admin (2026-05-10). Production migration is the remaining work.
+
+> **Note**: this file's original "skeletoned" plan (validators-first focus, Claude Sonnet for story, Helicone observability) was written before Sprint 2. Real Sprint 3 became illustration-pipeline-rebuild + face-fidelity work after Phase 1 verdict closed. The original validators / Claude / Helicone items are deferred to Sprint 3+ followups OR may be retired entirely. **For real Sprint 3 status, read `docs/sprints/sprint-tracker.md` "Resume here" + `docs/session-notes/2026-05-10-face-fidelity-marathon.md`** — those are the live planning surface, not this file.
+
+---
+
+## Real Sprint 3 status (2026-05-10)
+
+**Completed:**
+- Sprint 3 #1+#2 (committed `919b846`): schema additions (`charactersOnPage` + `keyObjectOrDetail`) + Bible-gen rewrite + buildIllustrationPrompt rewrite + tests
+- Sprint 3 audit quick wins (`5ef4690`): Arabic glossary triggers + describePhoto vision rewrite + sandwich-bottom re-anchors
+- Sprint 3 audit followups (`d5de204`): age-matched few-shot shuffle + 4th example
+- Iter 7 face-fidelity marathon: full 16-page Hana book reference at https://hadouta-admin.vercel.app/orders/22563851-2047-4f9e-ac47-ad27e036d4ea
+- ADR-028 (watercolor revert from Pixar-3D)
+- ADR-029 (production retry-queue architecture)
+
+**In flight (next session priorities, ordered):**
+1. Watercolor revert in `bible-system-prompt.ts` (undoes Pixar-3D defaults from `919b846` per ADR-028)
+2. Iter 7 prompt structure into production `buildIllustrationPrompt` (role-assigned references, narrative paragraph, per-beat positive face/expression prose)
+3. Switch `illustration-generator.ts` from fal.ai to Google direct API (`gemini-3.1-flash-image-preview` via `https.request`)
+4. Multi-turn refinement (turn 1 + turn 2 + thought_signature pass-through)
+5. Per-call retry-with-backoff (10s/30s/60s/120s, then unlimited 5-min on 503/429/500)
+6. Schema migration: `failed_retry_pending` + `failed_human_review` + `next_retry_at` + `last_error` columns
+7. Background retry worker (`jobs/retry-failed-generations.ts`)
+8. Cloudinary upload retry (3-attempt)
+9. 3:4 aspect ratio enforcement via `imageConfig.aspectRatio`
+10. Tier 2 spending plan ($250+ over 3 days bumps Google AI Studio API key)
+11. Trigger.dev v3 migration per ADR-010 (wraps the retry-queue)
+12. Cleanup: remove `appendPixarStyleAnchor`, `flux-kontext-pixar` provider, `PIXAR_STYLE_LORA_URL` env, experimental scripts
+13. Push the 3 backend commits to origin (after watercolor revert lands)
+
+**Deferred to Sprint 3+ or retired:**
+- Validators framework v1 — partly redundant given Phase 1 verdict bounded face-fidelity structurally; cultural/age/religious-neutrality validators still in scope per ADR-012/013 but lower priority than the production migration
+- Story-quality tuning — iter 7 confirmed story is already strong; gap is illustration-side
+- Helicone observability — superseded by Sentry + PostHog instrumentation (Sprint 3 followup)
+- Active learning loop with pgvector — Sprint 4+
+
+**Reference implementation** for production migration: `hadouta-backend/src/scripts/_iter7_full_book.ts`. Has every layer-1 and layer-2 fix from ADR-029 working end-to-end.
+
+---
+
+## Original Sprint 3 plan (HISTORICAL — may be outdated)
+
+The content below was written pre-Sprint-2 and assumed validators-first + Claude Sonnet + Helicone. Kept for historical reference; live status is above.
 
 ---
 
