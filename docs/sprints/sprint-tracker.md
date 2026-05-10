@@ -326,6 +326,7 @@ Bootstrap session deliverables — all complete:
 | ADR-027 | Watercolor → Pixar-3D brand pivot: ADR-005's watercolor anchor is dropped (the L3 photo-upload portion stands). Pixar-3D animated register (Disney Encanto / Coco / Inside Out) is the locked illustration style. Egyptian cultural specificity moves to content layer (story voice, kahk/fanous/makarona-bashamel cultural anchors, settings) — register is now an open product variable. Brand brief + customer copy edits required as Sprint 3 followup (added 2026-05-06; supersedes ADR-005 style portion; companion to ADR-026) — **SUPERSEDED by ADR-028 on 2026-05-10** |
 | ADR-028 | Watercolor revert from Pixar-3D: reverts ADR-027 brand portion. Pixar models bias toward youthful-cute regardless of explicit age cues; watercolor's softer edges absorb face-geometry imperfections that Pixar exposes. Tomie dePaola's Strega Nona + Helen Oxenbury's We're Going on a Bear Hunt as named-work style anchors. ADR-005's watercolor register restored. ADR-026's illustration architecture (Nano Banana 2 + multi-image identity) stands (added 2026-05-10) |
 | ADR-029 | Production retry-queue architecture: persistent queue-based retry for AI illustration generation. New generation statuses `failed_retry_pending` + `failed_human_review`. New columns `next_retry_at` + `last_error`. Per-call retry-with-backoff (10s/30s/60s/120s/then 5-min unlimited) on 503/429/500. Multi-turn refinement (turn 1 + turn 2 self-critique) with thought_signature pass-through. Cloudinary upload retry (3-attempt). Background cron worker every 5 min picks up stuck generations. Trigger.dev v3 migration per ADR-010. Reference implementation: `hadouta-backend/src/scripts/_iter7_full_book.ts` (added 2026-05-10; companion to ADR-022) |
+| ADR-030 | Production illustration architecture (post-validation): locks the ACTUAL shipped state across `src/lib/ai/*`. Google direct API + multi-turn + Image 1..N customer photos (identity) + FINAL image static Beatrix Potter PD watercolor (style; non-recursive) + mandatory photo upload + 4-layer text-only wardrobe enforcement + skip-and-continue orchestration + 18+ category error taxonomy + V7 retry queue (schema 0008 + cron worker + resume logic). Pixar-3D legacy DELETED. Iter scripts no longer load-bearing — production is the source of truth (added 2026-05-10 evening; supersedes the implementation gap in ADRs 022/024/026/028/029) |
 
 ---
 
@@ -363,7 +364,34 @@ None currently. Next session can begin executing Sprint 1 immediately.
 
 ---
 
-**Last updated**: 2026-05-10 by Claude. **Iter 7 face-fidelity marathon SHIPPED AND CLOSED. Watercolor brand restored (ADR-028). Production retry-queue architecture spec'd (ADR-029). Iter 7 reference book live in admin. Sprint 3 production migration is now the work.**
+**Last updated**: 2026-05-10 (LATER, post-refactor) by Claude. **Production refactor SHIPPED — iter 7/8 wins ported into `src/lib/ai/*`, recursive AI references killed, V7 retry queue implemented, end-state validated against 10 customer use cases. ADR-030 documents the locked architecture. Production probe rendered cover + page 1 with iter-8-quality face fidelity. Architecture is shipping-ready pending 4 ops steps (apply migration 0008 to prod, set STATIC_WATERCOLOR_ANCHOR_URL on Railway, wire Railway cron, verify wizard photo-mandatory gate).**
+
+### 2026-05-10 update — Production refactor closed (later same day)
+
+After the iter 7 face-fidelity marathon, founder directive was clear: stop editing iter scripts, port everything into `src/lib/ai/*`. End-of-day session executed that, plus AI Engineer end-state validation across 10 customer use cases identified 3 production-blocker bugs (V3 turn-2 face-blend, UC10 single-page failure killing book, V7 retry queue not implemented despite ADR-029) and 5 quick wins. All fixed.
+
+Architectural locks (ADR-030):
+- API: Google direct (`gemini-3.1-flash-image-preview`), NOT fal.ai
+- Image stack: customer photos as Image 1..N (identity), Beatrix Potter 1902 PD plate as FINAL image (style). Customer photos LEAD per iter 8's empirically-proven pattern.
+- Multi-turn refinement on cover + every body page (5-axis turn-2 critique: face/wardrobe/scale/full-body/expression)
+- Mandatory customer photo upload (wizard gate + backend defensive validation)
+- Wardrobe consistency: text-only 4-layer enforcement (no Image 3 anchor — recursive AI removed)
+- Skip-and-continue orchestration (single-page failure no longer kills whole book)
+- Comprehensive error taxonomy with 18+ Gemini categories + per-category retry policy
+- V7 retry queue: schema migration 0008 + `retry-failed-generations.ts` cron worker + resume logic in `runGenerationPipeline`
+- Pixar-3D legacy code DELETED per ADR-028
+
+**Key decisions locked tonight (don't relitigate)**: see `docs/session-notes/2026-05-10-production-refactor.md` and `docs/decisions/ADR-030-production-illustration-architecture.md`.
+
+**Resume protocol next session**:
+1. Read `docs/session-notes/2026-05-10-production-refactor.md` first.
+2. Read `docs/decisions/ADR-030-production-illustration-architecture.md` for the architecture lock-in.
+3. Apply migration 0008 to Railway prod (use `_apply_0008.ts` workaround OR raw SQL — Drizzle journal stops at 0004).
+4. Set `STATIC_WATERCOLOR_ANCHOR_URL` on Railway production env.
+5. Wire Railway cron for `pnpm tsx src/scripts/run-retry-worker.ts` every 5 min.
+6. Verify wizard mandates photo upload on `hadouta-web`.
+7. Bump Google AI Studio API key to Tier-2 (>$250 cumulative spend) — Tier-1 was producing 5-17 min waits per illustration tonight.
+8. Don't re-litigate locked decisions in ADR-030.
 
 ### 2026-05-10 update — Iter 7 face-fidelity marathon closed
 
