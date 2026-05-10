@@ -9,7 +9,7 @@
 **Project**: Hadouta (حدوتة) — Egyptian AI personalized children's book platform
 **Launch target**: September 1, 2026
 **Build window**: ~22 weeks from 2026-04-30
-**Current phase**: ✅ Bootstrap complete · ✅ Public repos live · ✅ Sprint 1 wizard end-to-end on prod · ✅ **Sprint 2 SHIPPED** (AI gen + admin review + customer PDF download) · ✅ **Post-Sprint-2 polish SHIPPED** (PDF redesign + illustration pipeline rebuilt, Bible-driven, Nano Banana Pro Edit, multi-photo identity) · ✅ **Phase 1 character-fidelity verdict SHIPPED** (2026-05-06: Nano Banana 2 + Pixar-3D prompt overlay locked as the architecture; ADRs 026/027) · 🟢 **Ready to start Sprint 3 — refreshed entry points (Bible-gen rewrite + buildIllustrationPrompt rewrite take top priority over original validators-first plan)**
+**Current phase**: ✅ Bootstrap · ✅ Sprint 1 wizard live · ✅ Sprint 2 SHIPPED · ✅ Phase 1 character-fidelity verdict (Nano Banana 2 locked, ADR-026) · ✅ **Sprint 3 #1+#2 + audit COMMITTED (local, not pushed): commits `919b846` + `5ef4690` + `d5de204`** · ✅ **Iter 7 face-fidelity marathon: full 16-page Hana book ON ADMIN with watercolor + multi-turn + role-assigned references on Google direct API (2026-05-08 → 2026-05-10)** · 🟢 **Sprint 3 production migration is the new top priority — iter 7 architecture must land in production code**
 
 ### GitHub repos (all live as of session 9)
 - 📚 **Umbrella + docs** (public): https://github.com/ahmedabdelhamid404/hadouta
@@ -74,41 +74,51 @@ End-to-end AI generation cycle from paid order to customer-downloadable PDF: Pay
 
 ## Resume here (next concrete action)
 
-> **🟢 Phase 1 character-fidelity verdict SHIPPED 2026-05-06. Sprint 3 refreshed and ready to start.**
->
-> **What's working in production right now (verified through 2026-05-06):**
-> - Customer wizard end-to-end: 1-3 photos uploaded → paid order → auto AI generation → admin reviews in queue → approves → customer downloads PDF.
-> - Illustration model upgraded: production endpoint is now `fal-ai/nano-banana-2/edit` (Gemini 3.1 Flash Image, $0.08/edit, ~half the prior cost). Drop-in swap; same multi-image-edit shape; better adult-character rendering + better instruction following.
-> - Admin sign-in working from `hadouta-admin.vercel.app`.
-> - PDF redesign live (cover + 16 body + end-page system per ADR-023).
+> **🟢 Iter 7 face-fidelity marathon CLOSED 2026-05-10. Sprint 3 production migration is the next concrete work.**
 >
 > **READ FIRST next session — in this exact order:**
-> 1. `docs/session-notes/2026-05-06-phase-1-character-fidelity-verdict.md` — full Phase 1 journey log (6 iterations, why Flux Kontext + Pixar LoRA was abandoned, why Nano Banana 2 won, all bugs documented).
-> 2. `docs/decisions/ADR-026-phase-1-pixar-character-fidelity-verdict.md` — verdict architecture + production gaps that Sprint 3 must close.
-> 3. `docs/decisions/ADR-027-watercolor-to-pixar-3d-brand-pivot.md` — brand-side implications of the verdict.
+> 1. `docs/session-notes/2026-05-10-face-fidelity-marathon.md` — full session log: 16-page book journey, LoRA misconception cleanup, watercolor revert, Google direct + multi-turn + thought_signature fix, retry-queue architecture, all generation IDs + admin URLs.
+> 2. `docs/decisions/ADR-028-watercolor-revert-from-pixar-3d.md` — reverts ADR-027's Pixar-3D pivot back to watercolor. Architectural reason: Pixar models bias toward youthful-cute on adult characters; watercolor's softer edges absorb face-geometry imperfections. Brand register restored to ADR-005.
+> 3. `docs/decisions/ADR-029-production-retry-queue-architecture.md` — production resilience layer: queue-based retry with `failed_retry_pending` + `failed_human_review` statuses, multi-turn refinement with thought_signature pass-through, Trigger.dev migration path.
+> 4. `hadouta-backend/src/scripts/_iter7_full_book.ts` — the reference implementation. Every layer-1 and layer-2 fix from ADR-029 is in this script.
+> 5. The reference output: https://hadouta-admin.vercel.app/orders/22563851-2047-4f9e-ac47-ad27e036d4ea — full 16-page Hana book in admin queue.
 >
-> **What changed in production code this session:**
-> - `fal-ai/nano-banana-pro/edit` → `fal-ai/nano-banana-2/edit` (constants renamed, modelId fields updated). Commit `278f0a3`.
-> - `appendPixarStyleAnchor()` helper added with Pixar-3D trigger + anti-watercolor + NO-TEXT-IN-IMAGE clauses.
-> - `flux-kontext-pixar` provider exists as alternate (not default; Sprint 3 cleanup target).
+> **What's working right now (verified 2026-05-10):**
+> - Iter 7 generation `22563851-2047-4f9e-ac47-ad27e036d4ea` — full 16-page Hana book on Google direct API with multi-turn refinement, role-assigned references, 3:4 aspect ratio, watercolor style, scale-fix on cover, unlimited retry on Google 503/500.
+> - Customer wizard end-to-end (Sprint 1 + Sprint 2 functionality unchanged).
+> - Admin app live with all iter 7 generations visible.
 >
-> **What's NOT yet in production but is in iteration scripts (Sprint 3 must port):**
-> - Bible-gen prompt rewrites (Pixar-friendly styleBible + populated supportingCharacters + story-aligned outfits)
-> - `buildIllustrationPrompt` rewrites (per-page pose, environmental props, character-presence injection, identity disambiguation, 60/40 composition)
+> **What's committed in `hadouta-backend` `main` (LOCAL, NOT pushed):**
+> - `919b846` — Sprint 3 #1+#2: Pixar-3D Bible-gen + buildIllustrationPrompt rewrite + schema additions + tests + cleanup
+> - `5ef4690` — Sprint 3 audit quick wins: glossary triggers + vision rewrite + sandwich anchors
+> - `d5de204` — Sprint 3 audit followups: age-matched few-shot shuffle + 4th example
 >
-> **The verdict generation is in admin queue:** https://hadouta-admin.vercel.app/orders/fe8fe560-c009-4cd4-8533-83fca7b0a5e8 — this is iteration-6 quality, what production should match after Sprint 3's prompt-builder work.
+> ⚠️ **The Pixar-3D defaults shipped in `919b846` need to be reverted to watercolor before pushing to origin** (per ADR-028).
 >
-> **Sprint 3 entry points — REFRESHED priority order:**
-> 1. **Bible-gen prompt rewrite** ← biggest gap, top priority. Currently produces watercolor-era styleBible (`"soft watercolor on cream paper"` + `"NOT 3D-rendered"`) and empty `supportingCharacters` array (a long-standing bug). Rewrite to default Pixar-friendly fields, populate supportingCharacters from named characters in the story, produce story-aligned outfit defaults. Without this, production output stays at iteration-1 quality.
-> 2. **`buildIllustrationPrompt` rewrite** to port iter-6's inline-prompt structure into the production prompt-builder (per-page POSE & EMOTION direction, SETTING & ENVIRONMENTAL DETAILS props, character-presence injection, identity-disambiguation language, 60/40 hero/setting composition, anti-conflicting-style negatives).
-> 3. **Brand brief + customer copy update** per ADR-027 — `docs/brand/brand-brief.md` watercolor language replaced; landing page hero, wizard copy, order-confirmation email, WhatsApp template all updated.
-> 4. **End-to-end full-book test** under verdict architecture — Phase 1 only tested 4 pages × 1 child. Run a full 17-page generation on a different test order (different age, different theme, different skin tone) for cross-demographic validation.
-> 5. **Cleanup**: remove `flux-kontext-pixar` provider code path + `callFluxKontextPixar()` helper + `PIXAR_STYLE_LORA_URL` env var + iteration scripts + `verify-fal-kontext-lora.ts`. Remove `appendPixarStyleAnchor` once Bible-gen produces Pixar-friendly styleBible by default.
-> 6. **Validators framework v1** — character validator becomes redundant under verdict architecture (face fidelity is structurally bounded by Nano Banana 2 + multi-photo identity); cultural / age-band / religious-neutrality validators still in scope per ADR-012 + ADR-013.
-> 7. **PostHog funnel events** + Sentry instrumentation around generation pipeline stages.
-> 8. **Trigger.dev v3 migration** when concurrency demands durability (per ADR-010, recipe in ADR-022).
-> 9. **HMAC magic-link tokens** for `/api/public/order-status/:orderId` (Sprint 2 followup, hardening).
-> 10. **Story-quality tuning** — defer until items 1–2 ship; iter-6 showed story is already strong; the gap is illustration-side.
+> **What's NOT in production but proven in iter 7 (Sprint 3 production migration tasks):**
+> 1. **Watercolor revert in `bible-system-prompt.ts`** — undo Pixar-3D defaults from commit `919b846`, replace with watercolor (Tomie dePaola + Helen Oxenbury references, wet-on-wet keyword, cold-press paper, anti-Disney negatives). See ADR-028.
+> 2. **Iter 7 prompt structure into `buildIllustrationPrompt`** — narrative paragraph (no bullets), role-assigned input images (Image 1 = identity only, Image 2 = style only), per-beat positive face/expression prose (no NOT-negatives), face-visibility floor, 3:4 aspect ratio, scale-fix language. Reference: `_iter7_full_book.ts` `buildPrompt()`.
+> 3. **Switch `illustration-generator.ts` from fal.ai to Google direct API** (`gemini-3.1-flash-image-preview`, REST via `https.request`, 20-min socket timeout). Only Google direct supports multi-turn.
+> 4. **Multi-turn refinement (turn 1 + turn 2 self-critique)** with `thought_signature` pass-through (raw model parts replay). Per-call cost goes from ~$0.04 → ~$0.08 (2 successful calls per illustration).
+> 5. **Retry-with-backoff per Google call**: 503/429/500 → exponential backoff then unlimited 5-min retry. Bail on 400/401/403. See ADR-029 layer 1.
+> 6. **Queue-based retry orchestration**: schema migration adds `failed_retry_pending` + `failed_human_review` + `next_retry_at` + `last_error`. Background worker every 5 min picks up stuck generations. See ADR-029 layers 3-4.
+> 7. **Cloudinary upload retry** (3 attempts with backoff) — `_iter7_full_book.ts` had 2 transient timeouts.
+> 8. **Tier 2 spending plan**: API key currently on Google AI Studio Tier 1. $250+ over 3 days bumps to Tier 2 (substantially fewer 503s + opt-out of training data use).
+> 9. **3:4 aspect ratio lock** via `generationConfig.imageConfig.aspectRatio: "3:4"` — fits A5 PDF without cropping.
+> 10. **Trigger.dev v3 migration** per ADR-010 — wraps the retry-queue in durable jobs. Sprint 3+.
+>
+> **Cleanup tasks (Sprint 3 closing):**
+> - Delete experimental scripts in `hadouta-backend/src/scripts/_*` after migrating their lessons. KEEP: `_iter7_full_book.ts` (reference until production migration done), `_neon-probe.ts`, `_probe-google-api.ts`, `_iter7_get_urls.ts`. DELETE: all the `_iter1` through `_iter6` + recovery scripts + Qwen trials.
+> - Remove `appendPixarStyleAnchor()` from `build-illustration-prompt.ts`.
+> - Remove `flux-kontext-pixar` provider path + `callFluxKontextPixar` + `PIXAR_STYLE_LORA_URL` env var.
+> - Update `docs/brand/brand-brief.md` from Pixar-3D back to watercolor.
+> - Update landing page, wizard copy, order-confirmation email, WhatsApp template per ADR-028.
+>
+> **Sprint 3 deferred items (NOT face-fidelity related):**
+> - Validators framework v1 (cultural / age / religious-neutrality)
+> - Story-quality tuning
+> - PostHog funnel events + Sentry instrumentation
+> - HMAC magic-link tokens for `/api/public/order-status/:orderId`
 
 ### Sprint 2 followups (now scoped into Sprint 3)
 
@@ -313,7 +323,9 @@ Bootstrap session deliverables — all complete:
 | ADR-024 | Bible-driven illustration pipeline with Nano Banana Pro Edit: 5-step pipeline (Story → Bible → per-page prompts → 17 illustrations via fal-ai/nano-banana-pro/edit → PDF); multi-photo identity references on every illustration call; structured Bible (characterBible + settingBible + styleBible + culturalNotes) generated by gpt-4o; cultural-glossary.ts with Egyptian terms + negative examples is the moat; per-book cost ~$0.74; body pages do NOT receive cover as image reference (Phase H proved cover-as-ref produces duplicate scenes) (added 2026-05-05; extends ADR-006 + ADR-019 + ADR-022; supersedes Sprint 2 Gemini-direct illustration provider) |
 | ADR-025 | Phase H pivot — Flux+PuLID rejected: spec called for Flux 1.1 Pro + PuLID per industry-survey research; 8 real-API iterations during Phase H verification proved PuLID has a portrait-only ceiling unaffected by id_weight or start_step tuning (parameter ceiling vs capability ceiling distinction); pivoted to Nano Banana Pro Edit which natively supports multi-image conditioning. Lessons-learned ADR. Real-API verification PRECEDES architecture lock-in for any future model-selection spec (added 2026-05-05; drives ADR-024) |
 | ADR-026 | Phase 1 character-fidelity verdict — Nano Banana 2 (Gemini 3.1 Flash Image, fal-ai/nano-banana-2/edit, $0.08/edit) + multi-image identity reference (1–3 customer photos) + Pixar-3D prompt overlay (no LoRA needed) is the locked illustration architecture. 6-iteration verification sprint produced ~$2.50 spend; iter 6 dramatically beat iter-4's Flux Kontext + Pixar LoRA on adult-character age differentiation, narrative-action depiction, accessory-state stability, and per-page cost. Production endpoint upgraded (commit 278f0a3). Production prompt-builder gaps (Bible-gen styleBible + supportingCharacters; buildIllustrationPrompt structure) recorded as Sprint 3 top-priority work (added 2026-05-06; extends ADR-024) |
-| ADR-027 | Watercolor → Pixar-3D brand pivot: ADR-005's watercolor anchor is dropped (the L3 photo-upload portion stands). Pixar-3D animated register (Disney Encanto / Coco / Inside Out) is the locked illustration style. Egyptian cultural specificity moves to content layer (story voice, kahk/fanous/makarona-bashamel cultural anchors, settings) — register is now an open product variable. Brand brief + customer copy edits required as Sprint 3 followup (added 2026-05-06; supersedes ADR-005 style portion; companion to ADR-026) |
+| ADR-027 | Watercolor → Pixar-3D brand pivot: ADR-005's watercolor anchor is dropped (the L3 photo-upload portion stands). Pixar-3D animated register (Disney Encanto / Coco / Inside Out) is the locked illustration style. Egyptian cultural specificity moves to content layer (story voice, kahk/fanous/makarona-bashamel cultural anchors, settings) — register is now an open product variable. Brand brief + customer copy edits required as Sprint 3 followup (added 2026-05-06; supersedes ADR-005 style portion; companion to ADR-026) — **SUPERSEDED by ADR-028 on 2026-05-10** |
+| ADR-028 | Watercolor revert from Pixar-3D: reverts ADR-027 brand portion. Pixar models bias toward youthful-cute regardless of explicit age cues; watercolor's softer edges absorb face-geometry imperfections that Pixar exposes. Tomie dePaola's Strega Nona + Helen Oxenbury's We're Going on a Bear Hunt as named-work style anchors. ADR-005's watercolor register restored. ADR-026's illustration architecture (Nano Banana 2 + multi-image identity) stands (added 2026-05-10) |
+| ADR-029 | Production retry-queue architecture: persistent queue-based retry for AI illustration generation. New generation statuses `failed_retry_pending` + `failed_human_review`. New columns `next_retry_at` + `last_error`. Per-call retry-with-backoff (10s/30s/60s/120s/then 5-min unlimited) on 503/429/500. Multi-turn refinement (turn 1 + turn 2 self-critique) with thought_signature pass-through. Cloudinary upload retry (3-attempt). Background cron worker every 5 min picks up stuck generations. Trigger.dev v3 migration per ADR-010. Reference implementation: `hadouta-backend/src/scripts/_iter7_full_book.ts` (added 2026-05-10; companion to ADR-022) |
 
 ---
 
@@ -351,7 +363,31 @@ None currently. Next session can begin executing Sprint 1 immediately.
 
 ---
 
-**Last updated**: 2026-05-06 by Claude. **Phase 1 character-fidelity verdict SHIPPED AND CLOSED (ADRs 026/027). Production on Nano Banana 2 + Pixar-3D brand register.**
+**Last updated**: 2026-05-10 by Claude. **Iter 7 face-fidelity marathon SHIPPED AND CLOSED. Watercolor brand restored (ADR-028). Production retry-queue architecture spec'd (ADR-029). Iter 7 reference book live in admin. Sprint 3 production migration is now the work.**
+
+### 2026-05-10 update — Iter 7 face-fidelity marathon closed
+
+3-day session (2026-05-08 → 2026-05-10) shipped a full 16-page Hana book at https://hadouta-admin.vercel.app/orders/22563851-2047-4f9e-ac47-ad27e036d4ea using a substantially different illustration architecture than what's in production code. Reference implementation in `hadouta-backend/src/scripts/_iter7_full_book.ts`.
+
+**Key architectural shifts (NOT YET in production code; Sprint 3 production migration must port them):**
+
+1. **Watercolor brand register restored** per ADR-028, superseding ADR-027's Pixar-3D pivot. Pixar models biased toward youthful-cute on adult characters; watercolor's softer edges forgive face-geometry imperfections.
+
+2. **Role-assigned input images**: Image 1 = IDENTITY REFERENCE only (face/skin/hair, ignore expression/pose), Image 2 = STYLE REFERENCE only (watercolor medium, ignore character). Task framing = "render fresh, do NOT copy any input pose." Single narrative paragraph, no NOT-negatives. Per AI Engineer audit citing 4 independent 2026 sources.
+
+3. **Multi-turn refinement** (turn 1 + turn 2 self-critique) — only available on Google direct API, NOT fal.ai. Requires `thought_signature` pass-through via raw model parts replay.
+
+4. **Direct Google API** (`gemini-3.1-flash-image-preview`) replaces fal.ai for production. Tradeoff: Tier 1 throttling pain vs fal.ai middleware buffer. Founder direction: stay on Google for multi-turn capability.
+
+5. **Production retry-queue architecture** spec'd in ADR-029. `failed_retry_pending` + `failed_human_review` statuses. Unlimited 5-min retry on Google 503/500. 3-attempt Cloudinary retry. Background cron worker. Trigger.dev migration.
+
+6. **3:4 aspect ratio lock** via `generationConfig.imageConfig.aspectRatio` — fits A5 PDF without cropping.
+
+7. **LoRA misconception cleared up** definitively — empirical proof that fal.ai's `nano-banana-2/edit` ignores `loras` field; community "Nano Banana + LoRA" patterns are Pattern A (Nano Banana as TEACHER for training data, not in inference loop). Three independent research dispatches converged.
+
+**Cost data**: ~$8-12 estimated total session spend across all iterations + experiments. Per-book projections: single-pass on Flash ~$0.68, multi-turn on Flash ~$1.36, multi-turn on Pro ~$5.10.
+
+**Resume here next session**: read `docs/session-notes/2026-05-10-face-fidelity-marathon.md` first, then ADR-028 + ADR-029, then `_iter7_full_book.ts`. Pick the highest-priority production migration task (item 1 — watercolor revert in `bible-system-prompt.ts` — is the obvious starter since it unblocks pushing the 3 committed Sprint 3 #1+#2 commits to origin).
 
 ### 2026-05-06 update — Phase 1 character-fidelity verdict closed
 
